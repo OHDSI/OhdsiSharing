@@ -1,13 +1,14 @@
 Package: OhdsiSharing
 Type: Package
 Title: Package for sharing of the results of the OHDSI tools
-Version: 1.0
-Date: 2014-04-03
+Version: 0.0.1
+Date: 2015-08-05
 Author: Martijn Schuemie
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Package for sharing of the results of the OHDSI tools, with
-    functions for sending results through FTP to a central site.
-Depends:
-    RCurl,
-    DatabaseConnector
+    functions for encrypting results and sending results through FTP to a central site.
+Imports:
+    rJava
+Suggests:    
+    OhdsiRTools
 License: Apache License
