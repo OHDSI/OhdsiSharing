@@ -79,3 +79,110 @@ encryptFile <- function(sourceFileName, targetFileName, publicKeyFileName) {
 decryptFile <- function(sourceFileName, targetFileName, privateKeyFileName) {
   rJava::J("org.ohdsi.sharing.Encryption")$decryptFile(sourceFileName, targetFileName, privateKeyFileName)
 }
+
+#' Compress and encrypt a folder
+#'
+#' @details
+#' Compresses all files in a folder and its subfolders, and encrypts using the provided public key.
+#'
+#' @param sourceFolder      Name of the folder that must be encrypted.
+#' @param targetFileName      Name of the file that will hold the encrypted data.
+#' @param publicKeyFileName   Name of the file where the public key is stored.
+
+#' @examples
+#' \dontrun{
+#' generateKeyPair("public.key", "private.key")
+#' 
+#' # Create a folder with some data
+#' dir.create("test")
+#' data <- data.frame(x = runif(1000), y = 1:1000)
+#' saveRDS(data, "test/data1.rds")
+#' saveRDS(data, "test/data2.rds")
+#' 
+#' compressAndEncryptFolder("test", "data.zip.enc", "public.key")
+#' decryptAndDecompressFolder("data.zip.enc", "test2", "private.key")
+#' }
+#'
+#' @export
+compressAndEncryptFolder <- function(sourceFolder, targetFileName, publicKeyFileName) {
+  rJava::J("org.ohdsi.sharing.Encryption")$compressAndEncryptFolder(sourceFolder, targetFileName, publicKeyFileName)
+}
+
+#' Decrypt and decompress a folder
+#'
+#' @details
+#' Decrypts the data using the provided private key and extracts all files to a folder.
+#'
+#' @param sourceFileName       Name of the file that must be decrypted.
+#' @param targetFolder       Name of the folder that will hold the unencrypted data.
+#' @param privateKeyFileName   Name of the file where the private key is stored.
+#'
+#' @examples
+#' \dontrun{
+#' generateKeyPair("public.key", "private.key")
+#' 
+#' # Create a folder with some data
+#' dir.create("test")
+#' data <- data.frame(x = runif(1000), y = 1:1000)
+#' saveRDS(data, "test/data1.rds")
+#' saveRDS(data, "test/data2.rds")
+#' 
+#' compressAndEncryptFolder("test", "data.zip.enc", "public.key")
+#' decryptAndDecompressFolder("data.zip.enc", "test2", "private.key")
+#' }
+#'
+#' @export
+decryptAndDecompressFolder <- function(sourceFileName, targetFolder, privateKeyFileName) {
+  rJava::J("org.ohdsi.sharing.Encryption")$decryptAndDecompressFolder(sourceFileName, targetFolder, privateKeyFileName)
+}
+
+#' Compress a folder
+#'
+#' @details
+#' Compresses all files in a folder and its subfolders, and stores it in a single zip file.
+#'
+#' @param sourceFolder      Name of the folder that must be compressed.
+#' @param targetFileName      Name of the file that will hold the compressed data.
+
+#' @examples
+#' \dontrun{
+#' # Create a folder with some data
+#' dir.create("test")
+#' data <- data.frame(x = runif(1000), y = 1:1000)
+#' saveRDS(data, "test/data1.rds")
+#' saveRDS(data, "test/data2.rds")
+#' 
+#' compressFolder("test", "data.zip")
+#' decompressFolder("data.zip", "test2")
+#' }
+#'
+#' @export
+compressFolder <- function(sourceFolder, targetFileName) {
+  rJava::J("org.ohdsi.sharing.Encryption")$compressFolder(sourceFolder, targetFileName)
+}
+
+#' Decompress a folder
+#'
+#' @details
+#' Extracts all compressed files to a folder.
+#'
+#' @param sourceFileName       Name of the file that must be decompressed.
+#' @param targetFolder       Name of the folder that will hold the extracted data.
+
+#'
+#' @examples
+#' \dontrun{
+#' # Create a folder with some data
+#' dir.create("test")
+#' data <- data.frame(x = runif(1000), y = 1:1000)
+#' saveRDS(data, "test/data1.rds")
+#' saveRDS(data, "test/data2.rds")
+#' 
+#' compressFolder("test", "data.zip")
+#' decompressFolder("data.zip", "test2")
+#' }
+#'
+#' @export
+decompressFolder <- function(sourceFileName, targetFolder) {
+  rJava::J("org.ohdsi.sharing.Encryption")$decompressFolder(sourceFileName, targetFolder)
+}
