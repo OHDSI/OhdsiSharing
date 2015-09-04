@@ -7,14 +7,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -28,21 +31,22 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Encryption {
 
-	private static int	RSA_BITS	= 4096;
+	private static int RSA_BITS = 4096;
+	//private static int	RSA_BITS	= 512;
 	private static int	AES_BITS	= 128;
 
-	public static void main(String[] args) {
-		// generateKeyPair("s:/temp/public.key", "s:/temp/private.key");
-		// encryptFile("s:/temp/data.rds", "s:/temp/data.rds.enc", "s:/temp/public.key");
-		// decryptFile("s:/temp/data.rds.enc", "s:/temp/data2.rds", "s:/temp/private.key");
-		//compressAndEncryptFolder("S:/TEMP/test", "s:/temp/data.zip.enc", "s:/temp/public.key");
-		decryptAndDecompressFolder("s:/temp/data.zip.enc", "s:/temp/test2", "s:/temp/private.key");
-		//compressFolder("S:/TEMP/testSource", "s:/temp/test.zip");
-		//decompressFolder("s:/temp/test.zip", "s:/temp/test");
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		generateKeyPair("s:/temp/public.key", "s:/temp/private.key");
+		encryptFile("s:/temp/data.rds", "s:/temp/data.rds.enc", "s:/temp/public.key");
+		decryptFile("s:/temp/data.rds.enc", "s:/temp/data2.rds", "s:/temp/private.key");
+		// compressAndEncryptFolder("S:/TEMP/test", "s:/temp/data.zip.enc", "s:/temp/public.key");
+		// decryptAndDecompressFolder("s:/temp/data.zip.enc", "s:/temp/test2", "s:/temp/private.key");
+		// compressFolder("S:/TEMP/testSource", "s:/temp/test.zip");
+		// decompressFolder("s:/temp/test.zip", "s:/temp/test");
 
 	}
 
-	public static void generateKeyPair(String publicKeyFileName, String privateKeyFileName) {
+	public static void generateKeyPair(String publicKeyFileName, String privateKeyFileName) throws UnsupportedEncodingException {
 		KeyPair keyPair = null;
 		KeyPairGenerator keygen;
 		try {
@@ -56,34 +60,39 @@ public class Encryption {
 		saveKey(publicKeyFileName, keyPair.getPublic());
 	}
 
-	private static Key loadKey(String filename) {
-		Key result = null;
+	private static Key loadPrivateKey(String filename) {
 		try {
-			FileInputStream binFile = new FileInputStream(filename);
-			try {
-				ObjectInputStream inp = new ObjectInputStream(binFile);
-				try {
-					result = (Key) inp.readObject();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} finally {
-					inp.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
+			RandomAccessFile in = new RandomAccessFile(filename, "r");
+			byte[] keyBytes = new byte[(int) in.length()];
+			in.read(keyBytes);
+			in.close();
+			PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			return (keyFactory.generatePrivate(spec));
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return result;
+	}
+
+	private static Key loadPublicKey(String filename) {
+		try {
+			RandomAccessFile in = new RandomAccessFile(filename, "r");
+			byte[] keyBytes = new byte[(int) in.length()];
+			in.read(keyBytes);
+			in.close();
+			X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			return (keyFactory.generatePublic(spec));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static void saveKey(String filename, Key key) {
 		try {
-			FileOutputStream binFile = new FileOutputStream(filename);
+			FileOutputStream out = new FileOutputStream(filename);
 			try {
-				ObjectOutputStream out = new ObjectOutputStream(binFile);
-				out.writeObject(key);
+				out.write(key.getEncoded());
 				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -95,7 +104,7 @@ public class Encryption {
 
 	public static void encryptFile(String sourceFileName, String targetFileName, String publicKeyFileName) {
 		try {
-			Key publicKey = loadKey(publicKeyFileName);
+			Key publicKey = loadPublicKey(publicKeyFileName);
 
 			// Generate random symmetric key (AES algorithm):
 			KeyGenerator kgen = KeyGenerator.getInstance("AES");
@@ -132,7 +141,7 @@ public class Encryption {
 
 	public static void decryptFile(String sourceFileName, String targetFileName, String privateKeyFileName) {
 		try {
-			Key privateKey = loadKey(privateKeyFileName);
+			Key privateKey = loadPrivateKey(privateKeyFileName);
 
 			// Generate cipher using private key (RSA algorithm):
 			Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -182,7 +191,7 @@ public class Encryption {
 	public static void compressAndEncryptFolder(String sourceFolder, String targetFileName, String publicKeyFileName) {
 		try {
 			sourceFolder = sourceFolder.replaceAll("\\\\", "/");
-			Key publicKey = loadKey(publicKeyFileName);
+			Key publicKey = loadPublicKey(publicKeyFileName);
 
 			// Generate random symmetric key (AES algorithm):
 			KeyGenerator kgen = KeyGenerator.getInstance("AES");
@@ -270,7 +279,7 @@ public class Encryption {
 
 	public static void decryptAndDecompressFolder(String sourceFileName, String targetFolder, String privateKeyFileName) {
 		try {
-			Key privateKey = loadKey(privateKeyFileName);
+			Key privateKey = loadPrivateKey(privateKeyFileName);
 
 			if (!new File(targetFolder).exists()) {
 				new File(targetFolder).mkdir();
