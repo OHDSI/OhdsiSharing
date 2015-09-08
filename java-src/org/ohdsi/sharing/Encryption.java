@@ -31,15 +31,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Encryption {
 
-	private static int RSA_BITS = 4096;
-	//private static int	RSA_BITS	= 512;
+	private static int	RSA_BITS	= 4096;
 	private static int	AES_BITS	= 128;
 
 	public static void main(String[] args) throws UnsupportedEncodingException {
-		generateKeyPair("s:/temp/public.key", "s:/temp/private.key");
-		encryptFile("s:/temp/data.rds", "s:/temp/data.rds.enc", "s:/temp/public.key");
-		decryptFile("s:/temp/data.rds.enc", "s:/temp/data2.rds", "s:/temp/private.key");
-		// compressAndEncryptFolder("S:/TEMP/test", "s:/temp/data.zip.enc", "s:/temp/public.key");
+		//generateKeyPair("s:/temp/public.key", "s:/temp/private.key");
+		//encryptFile("s:/temp/data.rds", "s:/temp/data.rds.enc", "s:/temp/public.key");
+		//decryptFile("s:/temp/data.rds.enc", "s:/temp/data2.rds", "s:/temp/private.key");
+		 compressAndEncryptFolder("S:/TEMP/DrugsInPeds", "s:/temp/DrugsInPeds/data.zip.enc", "s:/temp/public.key");
 		// decryptAndDecompressFolder("s:/temp/data.zip.enc", "s:/temp/test2", "s:/temp/private.key");
 		// compressFolder("S:/TEMP/testSource", "s:/temp/test.zip");
 		// decompressFolder("s:/temp/test.zip", "s:/temp/test");
@@ -174,12 +173,15 @@ public class Encryption {
 	public static void compressFolder(String sourceFolder, String targetFileName) {
 		try {
 			sourceFolder = sourceFolder.replaceAll("\\\\", "/");
+			
 			// Open file output stream:
+			System.out.println("Creating archive " + targetFileName);
 			FileOutputStream out = new FileOutputStream(targetFileName);
 
 			// Zip and copy folder:
 			ZipOutputStream zipOut = new ZipOutputStream(out);
-			addFolder(sourceFolder, sourceFolder, zipOut);
+			String skip = new File(targetFileName).getCanonicalPath().toLowerCase();
+			addFolder(sourceFolder, sourceFolder, zipOut, skip);
 
 			// Close streams:
 			zipOut.close();
@@ -203,6 +205,7 @@ public class Encryption {
 			rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
 			// Open file output stream:
+			System.out.println("Creating archive " + targetFileName);
 			FileOutputStream file = new FileOutputStream(targetFileName);
 
 			// Encode symmetric key using encoding cipher, and write to file:
@@ -215,7 +218,8 @@ public class Encryption {
 
 			// Zip and copy folder:
 			ZipOutputStream zipOut = new ZipOutputStream(out);
-			addFolder(sourceFolder, sourceFolder, zipOut);
+			String skip = new File(targetFileName).getCanonicalPath().toLowerCase();
+			addFolder(sourceFolder, sourceFolder, zipOut, skip);
 
 			// Close streams:
 			zipOut.close();
@@ -224,14 +228,14 @@ public class Encryption {
 		}
 	}
 
-	private static void addFolder(String folder, String rootFolder, ZipOutputStream zipOut) {
+	private static void addFolder(String folder, String rootFolder, ZipOutputStream zipOut, String skip) {
 		try {
 			if (!folder.equals(rootFolder)) {
 				zipOut.putNextEntry(new ZipEntry(folder.replace(rootFolder + "/", "") + "/"));
 				zipOut.closeEntry();
 			}
 			for (File file : new File(folder).listFiles()) {
-				if (file.isFile()) {
+				if (file.isFile() && !file.getCanonicalPath().toLowerCase().equals(skip)) {
 					System.out.println("- adding " + folder + "/" + file.getName());
 					String name;
 					if (folder.equals(rootFolder))
@@ -242,7 +246,7 @@ public class Encryption {
 					copyStream(new FileInputStream(file), zipOut);
 					zipOut.closeEntry();
 				} else if (file.isDirectory()) {
-					addFolder(folder + "/" + file.getName(), rootFolder, zipOut);
+					addFolder(folder + "/" + file.getName(), rootFolder, zipOut, skip);
 				}
 			}
 		} catch (IOException e) {
