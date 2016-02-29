@@ -5,3 +5,5 @@
 .project
 build
 build.xml
+deploy.sh
+java-src
