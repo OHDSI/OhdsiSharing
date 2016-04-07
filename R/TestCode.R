@@ -1,4 +1,5 @@
 .testCode <- function() {
+  #library(OhdsiSharing)
   generateKeyPair("s:/temp/public.key", "s:/temp/private.key")
   
   data <- data.frame(x = runif(1000), y = 1:1000)
@@ -30,5 +31,16 @@
   
   compressFolder("s:/temp/test", "s:/temp/data.zip")
   decompressFolder("s:/temp/data.zip", "s:/temp/test2")
+  
+  ### Test S3 ###
+  key <- Sys.getenv("awsKey")
+  secret <- Sys.getenv("awsSecret")
+  sourceFile <- "s:/test.csv"
+  targetPath <- "/janssen/test.csv"
+  response <- putS3File(sourceFile = sourceFile,
+                        targetPath = targetPath,
+                        key = key,
+                        secret = secret)
+  response
 }
 

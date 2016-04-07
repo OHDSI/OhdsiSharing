@@ -19,7 +19,6 @@
 .formatAndCheckCode <- function() {
   OhdsiRTools::formatRFolder()
   OhdsiRTools::checkUsagePackage("OhdsiSharing")
-  OhdsiRTools::ohdsiLintrFolder()
 }
 
 .createManualAndVignettes <- function() {

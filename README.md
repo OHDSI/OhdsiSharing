@@ -22,7 +22,7 @@ decryptFile("data.rds.enc", "data2.rds", "private.key")
 
 Technology
 ============
-The OhdsiSharing package is an R package. Cryptographic used the Java Cryptography Architecture.
+The OhdsiSharing package is an R package. Cryptography uses the Java Cryptography Architecture.
 
 System Requirements
 ===================

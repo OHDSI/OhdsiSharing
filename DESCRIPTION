@@ -6,9 +6,13 @@ Date: 2015-08-05
 Author: Martijn Schuemie
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Package for sharing of the results of the OHDSI tools, with
-    functions for encrypting results and sending results through FTP to a central site.
+    functions for encrypting results and sending results through FTP to a central
+    site.
 Imports:
-    rJava
-Suggests:    
+    rJava,
+    aws.signature,
+    httr
+Suggests:
     OhdsiRTools
 License: Apache License
+RoxygenNote: 5.0.1
