@@ -55,9 +55,10 @@ OhdsiSharing is licensed under Apache License 2.0
 
 Development
 ===========
-SqlRender is being developed in R Studio.
+OhdsiSharing is being developed in R Studio.
 
 ###Development status
+[![Build Status](https://travis-ci.org/OHDSI/OhdsiSharing.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiSharing)
 
 Under development
 
