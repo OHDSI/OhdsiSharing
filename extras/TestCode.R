@@ -40,4 +40,12 @@ targetPath <- "/janssen/test.csv"
 response <- putS3File(sourceFile = sourceFile, targetPath = targetPath, key = key, secret = secret)
 response
 
+n <- 1000000
+stuff <- data.frame(x = runif(n), y = runif(n), z = 1:n)
+write.csv(stuff, file = "s:/stuff.csv", row.names = FALSE)
+sourceFile <- "s:/stuff.csv"
+targetPath <- "/janssen/stuff.csv"
+response <- putS3File(sourceFile = sourceFile, targetPath = targetPath, key = key, secret = secret)
+response
+
 
