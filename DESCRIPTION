@@ -11,7 +11,8 @@ Description: Package for sharing of the results of the OHDSI tools, with
 Imports:
     rJava,
     aws.signature,
-    httr
+    httr,
+    XML
 Suggests:
     OhdsiRTools
 License: Apache License

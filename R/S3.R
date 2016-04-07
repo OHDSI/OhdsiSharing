@@ -21,22 +21,22 @@
 # We'll switch to using that package when it is stable.
 
 #' Put a local file into a remote S3 bucket
-#' 
-#' @param sourceFile     The path to the file in the local filesystem.
-#' @param bucket         The name of the bucket to put the file in.
-#' @param targetPath     The path in the bucket where to place the file, e.g. "/study1/myFile.csv".
-#' @param region         The region of the S3.
-#' @param key            Your AWS access key.
-#' @param secret         Your AWS secret access key.
-#' 
+#'
+#' @param sourceFile   The path to the file in the local filesystem.
+#' @param bucket       The name of the bucket to put the file in.
+#' @param targetPath   The path in the bucket where to place the file, e.g. "/study1/myFile.csv".
+#' @param region       The region of the S3.
+#' @param key          Your AWS access key.
+#' @param secret       Your AWS secret access key.
+#'
 #' @export
 putS3File <- function(sourceFile,
-                      bucket = "ohdsi-network", 
+                      bucket = "ohdsi-network",
                       targetPath,
-                      region = "us-east-1", 
-                      key, 
+                      region = "us-east-1",
+                      key,
                       secret) {
-  if (region != "us-east-1"){
+  if (region != "us-east-1") {
     url <- paste0("https://s3-", region, ".amazonaws.com/")
   } else {
     url <- "https://s3.amazonaws.com/"
@@ -48,22 +48,23 @@ putS3File <- function(sourceFile,
   current <- Sys.time()
   d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
   p <- httr::parse_url(url)
-  action <- if (p$path == "") "/" else paste0("/", p$path)
-  
-  headers = list(`Content-Length` = file.size(sourceFile))
-  
+  action <- if (p$path == "")
+    "/" else paste0("/", p$path)
+
+  headers <- list(`Content-Length` = file.size(sourceFile))
+
   canonical_headers <- c(list(host = p$hostname, `x-amz-date` = d_timestamp), headers)
-  
-  Sig <- aws.signature::signature_v4_auth(
-    datetime = d_timestamp,
-    region = region,
-    service = "s3",
-    verb = "PUT",
-    action = action,
-    canonical_headers = canonical_headers,
-    request_body = sourceFile,
-    key = key, secret = secret)
-  
+
+  Sig <- aws.signature::signature_v4_auth(datetime = d_timestamp,
+                                          region = region,
+                                          service = "s3",
+                                          verb = "PUT",
+                                          action = action,
+                                          canonical_headers = canonical_headers,
+                                          request_body = sourceFile,
+                                          key = key,
+                                          secret = secret)
+
   headers$`x-amz-date` <- d_timestamp
   headers$`x-amz-content-sha256` <- Sig$BodyHash
   headers$Authorization <- Sig$SignatureHeader
@@ -73,15 +74,15 @@ putS3File <- function(sourceFile,
 }
 
 
-parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
+parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")) {
   ## Some objects have nothing to parse
-  if(is.null(r$headers$`content-type`)){
-    if(verbose){
+  if (is.null(r$headers$`content-type`)) {
+    if (verbose) {
       warning("Response has no body, nothing to parse")
     }
     out <- NULL
   } else {
-    if(r$headers$`content-type` == "application/xml"){
+    if (r$headers$`content-type` == "application/xml") {
       content <- httr::content(r, "text")
       response_contents <- try(XML::xmlToList(content), silent = TRUE)
       if (!inherits(response_contents, "try-error")) {
@@ -97,7 +98,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
       response <- r
     }
-    #raise errors if bad values are passed. 
+    # raise errors if bad values are passed.
     if (httr::http_status(r)$category == "client error") {
       httr::warn_for_status(r)
       h <- httr::headers(r)
@@ -105,7 +106,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
       out <- response
     }
-    
+
     if (inherits(out, "aws_error")) {
       attr(out, "request_canonical") <- Sig$CanonicalRequest
       attr(out, "request_string_to_sign") <- Sig$StringToSign

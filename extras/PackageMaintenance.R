@@ -1,6 +1,6 @@
 # @file PackageMaintenance
 #
-# Copyright 2015 Observational Health Data Sciences and Informatics
+# Copyright 2016 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiSharing
 # 
@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.formatAndCheckCode <- function() {
-  OhdsiRTools::formatRFolder()
-  OhdsiRTools::checkUsagePackage("OhdsiSharing")
-}
+# Format and check code:
+OhdsiRTools::formatRFolder()
+OhdsiRTools::checkUsagePackage("OhdsiSharing")
+OhdsiRTools::updateCopyrightYearFolder()
 
-.createManualAndVignettes <- function() {
-  shell("rm man/OhdsiSharing.pdf")
-  shell("R CMD Rd2pdf ./ --output=man/OhdsiSharing.pdf")
-}
+# Create manual and vignettes:
+shell("rm man/OhdsiSharing.pdf")
+shell("R CMD Rd2pdf ./ --output=man/OhdsiSharing.pdf")
+

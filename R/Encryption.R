@@ -1,6 +1,6 @@
 # @file Encryption.R
 #
-# Copyright 2015 Observational Health Data Sciences and Informatics
+# Copyright 2016 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiSharing
 # 
@@ -85,20 +85,20 @@ decryptFile <- function(sourceFileName, targetFileName, privateKeyFileName) {
 #' @details
 #' Compresses all files in a folder and its subfolders, and encrypts using the provided public key.
 #'
-#' @param sourceFolder      Name of the folder that must be encrypted.
+#' @param sourceFolder        Name of the folder that must be encrypted.
 #' @param targetFileName      Name of the file that will hold the encrypted data.
 #' @param publicKeyFileName   Name of the file where the public key is stored.
 
 #' @examples
 #' \dontrun{
 #' generateKeyPair("public.key", "private.key")
-#' 
+#'
 #' # Create a folder with some data
 #' dir.create("test")
 #' data <- data.frame(x = runif(1000), y = 1:1000)
 #' saveRDS(data, "test/data1.rds")
 #' saveRDS(data, "test/data2.rds")
-#' 
+#'
 #' compressAndEncryptFolder("test", "data.zip.enc", "public.key")
 #' decryptAndDecompressFolder("data.zip.enc", "test2", "private.key")
 #' }
@@ -114,19 +114,19 @@ compressAndEncryptFolder <- function(sourceFolder, targetFileName, publicKeyFile
 #' Decrypts the data using the provided private key and extracts all files to a folder.
 #'
 #' @param sourceFileName       Name of the file that must be decrypted.
-#' @param targetFolder       Name of the folder that will hold the unencrypted data.
+#' @param targetFolder         Name of the folder that will hold the unencrypted data.
 #' @param privateKeyFileName   Name of the file where the private key is stored.
 #'
 #' @examples
 #' \dontrun{
 #' generateKeyPair("public.key", "private.key")
-#' 
+#'
 #' # Create a folder with some data
 #' dir.create("test")
 #' data <- data.frame(x = runif(1000), y = 1:1000)
 #' saveRDS(data, "test/data1.rds")
 #' saveRDS(data, "test/data2.rds")
-#' 
+#'
 #' compressAndEncryptFolder("test", "data.zip.enc", "public.key")
 #' decryptAndDecompressFolder("data.zip.enc", "test2", "private.key")
 #' }
@@ -141,8 +141,8 @@ decryptAndDecompressFolder <- function(sourceFileName, targetFolder, privateKeyF
 #' @details
 #' Compresses all files in a folder and its subfolders, and stores it in a single zip file.
 #'
-#' @param sourceFolder      Name of the folder that must be compressed.
-#' @param targetFileName      Name of the file that will hold the compressed data.
+#' @param sourceFolder     Name of the folder that must be compressed.
+#' @param targetFileName   Name of the file that will hold the compressed data.
 
 #' @examples
 #' \dontrun{
@@ -151,7 +151,7 @@ decryptAndDecompressFolder <- function(sourceFileName, targetFolder, privateKeyF
 #' data <- data.frame(x = runif(1000), y = 1:1000)
 #' saveRDS(data, "test/data1.rds")
 #' saveRDS(data, "test/data2.rds")
-#' 
+#'
 #' compressFolder("test", "data.zip")
 #' decompressFolder("data.zip", "test2")
 #' }
@@ -166,10 +166,9 @@ compressFolder <- function(sourceFolder, targetFileName) {
 #' @details
 #' Extracts all compressed files to a folder.
 #'
-#' @param sourceFileName       Name of the file that must be decompressed.
-#' @param targetFolder       Name of the folder that will hold the extracted data.
+#' @param sourceFileName   Name of the file that must be decompressed.
+#' @param targetFolder     Name of the folder that will hold the extracted data.
 
-#'
 #' @examples
 #' \dontrun{
 #' # Create a folder with some data
@@ -177,7 +176,7 @@ compressFolder <- function(sourceFolder, targetFileName) {
 #' data <- data.frame(x = runif(1000), y = 1:1000)
 #' saveRDS(data, "test/data1.rds")
 #' saveRDS(data, "test/data2.rds")
-#' 
+#'
 #' compressFolder("test", "data.zip")
 #' decompressFolder("data.zip", "test2")
 #' }
