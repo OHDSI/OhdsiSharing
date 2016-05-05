@@ -34,13 +34,17 @@
 #'
 #' @export
 uploadFileToS3 <- function(uploadFileName, bucketName, keyName,
-                           accessKey = NULL, secretKey = NULL) {
+                           accessKey = NULL, secretKey = NULL, region = "") {
   if (is.null(accessKey) || is.null(secretKey)) {
     stop("Must provide AWS access key and secret key to for S3 bucket upload")
   }
   
   Sys.setenv(AWS_ACCESS_KEY_ID = accessKey)
   Sys.setenv(AWS_SECRET_KEY = secretKey)
+  
+  if (region != "") {
+    Sys.setenv(AWS_DEFAULT_REGION = "us-east-1")
+  }
   
   rJava::J("org.ohdsi.sharing.UploadToS3")$uploadFile(uploadFileName, bucketName, keyName)
 }
