@@ -31,8 +31,8 @@
 #'
 #' @export
 putS3File <- function(sourceFile,
-                      bucket = "ohdsi-network",
-                      targetPath,
+                      bucket,
+                      targetPath = "",
                       region = "us-east-1",
                       key,
                       secret) {
