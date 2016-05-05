@@ -12,7 +12,8 @@ Imports:
     rJava,
     aws.signature,
     httr,
-    XML
+    XML,
+    uuid
 Suggests:
     OhdsiRTools
 License: Apache License

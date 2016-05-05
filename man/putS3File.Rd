@@ -4,21 +4,21 @@
 \alias{putS3File}
 \title{Put a local file into a remote S3 bucket}
 \usage{
-putS3File(sourceFile, bucket = "ohdsi-network", targetPath,
-  region = "us-east-1", key, secret)
+putS3File(file, bucket, region = "us-east-1", key, secret,
+  appendUUID = TRUE, ...)
 }
 \arguments{
-\item{sourceFile}{The path to the file in the local filesystem.}
+\item{file}{The path to the file in the local filesystem.}
 
 \item{bucket}{The name of the bucket to put the file in.}
-
-\item{targetPath}{The path in the bucket where to place the file, e.g. "/study1/myFile.csv".}
 
 \item{region}{The region of the S3.}
 
 \item{key}{Your AWS access key.}
 
 \item{secret}{Your AWS secret access key.}
+
+\item{appendUUID}{Should append an universally unique identifier to file name when uploading?}
 }
 \description{
 Put a local file into a remote S3 bucket
