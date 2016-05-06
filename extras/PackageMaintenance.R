@@ -22,6 +22,6 @@ OhdsiRTools::checkUsagePackage("OhdsiSharing")
 OhdsiRTools::updateCopyrightYearFolder()
 
 # Create manual and vignettes:
-shell("rm man/OhdsiSharing.pdf")
-shell("R CMD Rd2pdf ./ --output=man/OhdsiSharing.pdf")
+shell("rm extras/OhdsiSharing.pdf")
+shell("R CMD Rd2pdf ./ --output=extras/OhdsiSharing.pdf")
 

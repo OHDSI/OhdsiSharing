@@ -35,8 +35,7 @@ putS3File <- function(file,
                       region = "us-east-1",
                       key,
                       secret, 
-                      appendUUID = TRUE,
-                      ...) {
+                      appendUUID = TRUE) {
   suppressWarnings(if (!require("aws.s3", quietly = TRUE)) {
     install.packages("aws.s3", repos = "http://cloudyr.github.io/drat", quiet = TRUE)
   })

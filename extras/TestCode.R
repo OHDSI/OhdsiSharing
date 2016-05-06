@@ -33,6 +33,10 @@ compressFolder("s:/temp/test", "s:/temp/data.zip")
 decompressFolder("s:/temp/data.zip", "s:/temp/test2")
 
 ### Test S3 ###
+
+
+
+
 key <- Sys.getenv("awsKey")
 secret <- Sys.getenv("awsSecret")
 sourceFile <- "s:/test.csv"
@@ -47,5 +51,7 @@ sourceFile <- "s:/stuff.csv"
 targetPath <- "/janssen/stuff.csv"
 response <- putS3File(sourceFile = sourceFile, targetPath = targetPath, key = key, secret = secret)
 response
+
+
 
 
