@@ -5,7 +5,7 @@
 \title{Put a local file into a remote S3 bucket}
 \usage{
 putS3File(file, bucket, region = "us-east-1", key, secret,
-  appendUUID = TRUE, ...)
+  appendUUID = TRUE)
 }
 \arguments{
 \item{file}{The path to the file in the local filesystem.}

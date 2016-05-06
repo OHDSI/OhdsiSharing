@@ -43,9 +43,15 @@ library("devtools")
 install_github("ohdsi/OhdsiSharing")
 ```
 
+If you want to use S3 functions, it is advisable to also install ```aws.s3```:
+
+```r
+install.packages("aws.s3", repos = "http://cloudyr.github.io/drat")
+```
+
 Getting Involved
 =============
-* Package manual: [OhdsiSharing manual](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/master/man/OhdsiSharing.pdf) 
+* Package manual: [OhdsiSharing manual](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/master/extras/OhdsiSharing.pdf) 
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
