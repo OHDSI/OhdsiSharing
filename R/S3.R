@@ -44,7 +44,7 @@ putS3File <- function(file,
   object <- basename(file)
   
   if (appendUUID) {
-    object <- paste0(object,uuid::UUIDgenerate())
+    object <- paste0(object, ".", uuid::UUIDgenerate())
   }
   
   aws.s3::put_object(file = file, object = object, bucket = bucket, key = key, secret = secret, region = region)
