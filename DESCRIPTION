@@ -13,7 +13,11 @@ Imports:
     aws.signature,
     httr,
     XML,
-    uuid
+    uuid,
+    xml2,
+    base64enc,
+    digest,
+    curl
 Suggests:
     OhdsiRTools
 License: Apache License
