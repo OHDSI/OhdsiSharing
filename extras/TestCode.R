@@ -33,7 +33,14 @@ compressFolder("s:/temp/test", "s:/temp/data.zip")
 decompressFolder("s:/temp/data.zip", "s:/temp/test2")
 
 ### Test S3 ###
+<<<<<<< HEAD
 
+=======
+putS3File(file = "s:/test.csv",
+          bucket = "ohdsi-study-noac",  
+          key = "AKIAJ3PXEO7DNAF56TBQ", 
+          secret = "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")
+>>>>>>> d0655544a6145ad908144137c76dd72a04b8542e
 
 
 
