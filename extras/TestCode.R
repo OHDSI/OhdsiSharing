@@ -32,32 +32,7 @@ decryptAndDecompressFolder("s:/temp/data.zip.enc", "s:/temp/test2", "s:/temp/pri
 compressFolder("s:/temp/test", "s:/temp/data.zip")
 decompressFolder("s:/temp/data.zip", "s:/temp/test2")
 
-### Test S3 ###
-<<<<<<< HEAD
 
-=======
-putS3File(file = "s:/test.csv",
-          bucket = "ohdsi-study-noac",  
-          key = "AKIAJ3PXEO7DNAF56TBQ", 
-          secret = "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")
->>>>>>> d0655544a6145ad908144137c76dd72a04b8542e
-
-
-
-key <- Sys.getenv("awsKey")
-secret <- Sys.getenv("awsSecret")
-sourceFile <- "s:/test.csv"
-targetPath <- "/janssen/test.csv"
-response <- putS3File(sourceFile = sourceFile, targetPath = targetPath, key = key, secret = secret)
-response
-
-n <- 1000000
-stuff <- data.frame(x = runif(n), y = runif(n), z = 1:n)
-write.csv(stuff, file = "s:/stuff.csv", row.names = FALSE)
-sourceFile <- "s:/stuff.csv"
-targetPath <- "/janssen/stuff.csv"
-response <- putS3File(sourceFile = sourceFile, targetPath = targetPath, key = key, secret = secret)
-response
 
 
 
