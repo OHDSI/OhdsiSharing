@@ -27,7 +27,7 @@
 #' @param region       The region of the S3.
 #' @param key          Your AWS access key.
 #' @param secret       Your AWS secret access key.
-#' @param appendUUID   Should append an universally unique identifier to file name when uploading?
+#' @param appendUuid   Should append an universally unique identifier to file name when uploading?
 #'
 #' @export
 putS3File <- function(file,
@@ -35,14 +35,14 @@ putS3File <- function(file,
                       region = "us-east-1",
                       key,
                       secret, 
-                      appendUUID = TRUE) {
+                      appendUuid = TRUE) {
   suppressWarnings(if (!require("aws.s3", quietly = TRUE)) {
     install.packages("aws.s3", repos = "http://cloudyr.github.io/drat", quiet = TRUE)
   })
   
   object <- basename(file)
   
-  if (appendUUID) {
+  if (appendUuid) {
     object <- paste0(object, ".", uuid::UUIDgenerate())
   }
   
