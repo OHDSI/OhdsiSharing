@@ -1,5 +1,6 @@
 
-#library(OhdsiSharing)
+library(OhdsiSharing)
+
 generateKeyPair("s:/temp/public.key", "s:/temp/private.key")
 
 data <- data.frame(x = runif(1000), y = 1:1000)
@@ -28,8 +29,8 @@ decryptAndDecompressFolder("s:/temp/data.zip.enc", "s:/temp/test2", "s:/temp/pri
 
 
 
-
-compressFolder("s:/temp/test", "s:/temp/data.zip")
+setwd("s:/")
+compressFolder("temp/test", "temp/data.zip")
 decompressFolder("s:/temp/data.zip", "s:/temp/test2")
 
 

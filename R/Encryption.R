@@ -32,7 +32,8 @@
 #'
 #' @export
 generateKeyPair <- function(publicKeyFileName, privateKeyFileName) {
-  rJava::J("org.ohdsi.sharing.Encryption")$generateKeyPair(publicKeyFileName, privateKeyFileName)
+  rJava::J("org.ohdsi.sharing.Encryption")$generateKeyPair(path.expand(publicKeyFileName), 
+                                                           path.expand(privateKeyFileName))
 }
 
 #' Encrypt a data file
@@ -54,7 +55,9 @@ generateKeyPair <- function(publicKeyFileName, privateKeyFileName) {
 #'
 #' @export
 encryptFile <- function(sourceFileName, targetFileName, publicKeyFileName) {
-  rJava::J("org.ohdsi.sharing.Encryption")$encryptFile(sourceFileName, targetFileName, publicKeyFileName)
+  rJava::J("org.ohdsi.sharing.Encryption")$encryptFile(path.expand(sourceFileName),
+                                                       path.expand(targetFileName),
+                                                       path.expand(publicKeyFileName))
 }
 
 #' Decrypt a data file
@@ -77,7 +80,9 @@ encryptFile <- function(sourceFileName, targetFileName, publicKeyFileName) {
 #'
 #' @export
 decryptFile <- function(sourceFileName, targetFileName, privateKeyFileName) {
-  rJava::J("org.ohdsi.sharing.Encryption")$decryptFile(sourceFileName, targetFileName, privateKeyFileName)
+  rJava::J("org.ohdsi.sharing.Encryption")$decryptFile(path.expand(sourceFileName),
+                                                       path.expand(targetFileName),
+                                                       path.expand(privateKeyFileName))
 }
 
 #' Compress and encrypt a folder
@@ -105,7 +110,9 @@ decryptFile <- function(sourceFileName, targetFileName, privateKeyFileName) {
 #'
 #' @export
 compressAndEncryptFolder <- function(sourceFolder, targetFileName, publicKeyFileName) {
-  rJava::J("org.ohdsi.sharing.Encryption")$compressAndEncryptFolder(sourceFolder, targetFileName, publicKeyFileName)
+  rJava::J("org.ohdsi.sharing.Encryption")$compressAndEncryptFolder(path.expand(sourceFolder),
+                                                                    path.expand(targetFileName), 
+                                                                    path.expand(publicKeyFileName))
 }
 
 #' Decrypt and decompress a folder
@@ -133,7 +140,9 @@ compressAndEncryptFolder <- function(sourceFolder, targetFileName, publicKeyFile
 #'
 #' @export
 decryptAndDecompressFolder <- function(sourceFileName, targetFolder, privateKeyFileName) {
-  rJava::J("org.ohdsi.sharing.Encryption")$decryptAndDecompressFolder(sourceFileName, targetFolder, privateKeyFileName)
+  rJava::J("org.ohdsi.sharing.Encryption")$decryptAndDecompressFolder(path.expand(sourceFileName),
+                                                                      path.expand(targetFolder),
+                                                                      path.expand(privateKeyFileName))
 }
 
 #' Compress a folder
@@ -158,7 +167,7 @@ decryptAndDecompressFolder <- function(sourceFileName, targetFolder, privateKeyF
 #'
 #' @export
 compressFolder <- function(sourceFolder, targetFileName) {
-  rJava::J("org.ohdsi.sharing.Encryption")$compressFolder(sourceFolder, targetFileName)
+  rJava::J("org.ohdsi.sharing.Encryption")$compressFolder(path.expand(sourceFolder), path.expand(targetFileName))
 }
 
 #' Decompress a folder
@@ -183,5 +192,5 @@ compressFolder <- function(sourceFolder, targetFileName) {
 #'
 #' @export
 decompressFolder <- function(sourceFileName, targetFolder) {
-  rJava::J("org.ohdsi.sharing.Encryption")$decompressFolder(sourceFileName, targetFolder)
+  rJava::J("org.ohdsi.sharing.Encryption")$decompressFolder(path.expand(sourceFileName), path.expand(targetFolder))
 }

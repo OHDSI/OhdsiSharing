@@ -5,7 +5,7 @@
 \title{Put a local file into a remote S3 bucket}
 \usage{
 putS3File(file, bucket, region = "us-east-1", key, secret,
-  appendUUID = TRUE)
+  appendUuid = TRUE)
 }
 \arguments{
 \item{file}{The path to the file in the local filesystem.}
@@ -18,7 +18,7 @@ putS3File(file, bucket, region = "us-east-1", key, secret,
 
 \item{secret}{Your AWS secret access key.}
 
-\item{appendUUID}{Should append an universally unique identifier to file name when uploading?}
+\item{appendUuid}{Should append an universally unique identifier to file name when uploading?}
 }
 \description{
 Put a local file into a remote S3 bucket
