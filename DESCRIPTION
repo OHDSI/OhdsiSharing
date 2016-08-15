@@ -18,7 +18,8 @@ Imports:
     xml2,
     base64enc,
     digest,
-    curl,
+    curl
+Suggests:
     aws.s3
 License: Apache License
 RoxygenNote: 5.0.1
