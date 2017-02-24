@@ -1,6 +1,9 @@
 
 library(OhdsiSharing)
 
+
+# Encryption --------------------------------------------------------------
+
 generateKeyPair("s:/temp/public.key", "s:/temp/private.key")
 
 data <- data.frame(x = runif(1000), y = 1:1000)
@@ -15,8 +18,6 @@ data2 <- readRDS("s:/temp/data.rds")
 all.equal(data, data2)
 
 
-
-
 if (!file.exists("s:/temp/test")) {
   dir.create("s:/temp/test")
 }
@@ -28,11 +29,22 @@ compressAndEncryptFolder("s:/temp/test", "s:/temp/data.zip.enc", "s:/temp/public
 decryptAndDecompressFolder("s:/temp/data.zip.enc", "s:/temp/test2", "s:/temp/private.key")
 
 
+# Compression -------------------------------------------------------------
 
 setwd("s:/")
 compressFolder("temp/test", "temp/data.zip")
 decompressFolder("s:/temp/data.zip", "s:/temp/test2")
 
+
+# S3 ----------------------------------------------------------------------
+
+data <- data.frame(x = runif(1000), y = 1:1000)
+saveRDS(data, "s:/temp/data.rds")
+
+putS3File(file = "s:/temp/data.rds",
+          bucket = "ohdsi-study-plp",
+          key = Sys.getenv("plpKey"),
+          secret = Sys.getenv("plpSecret"))
 
 
 

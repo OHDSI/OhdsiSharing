@@ -1,6 +1,6 @@
 # @file S3.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiSharing
 # 
@@ -37,7 +37,7 @@ putS3File <- function(file,
                       secret, 
                       appendUuid = TRUE) {
   suppressWarnings(if (!require("aws.s3", quietly = TRUE)) {
-    install.packages("aws.s3", repos = "http://cloudyr.github.io/drat", quiet = TRUE)
+    install.packages("aws.s3", repos = c("cloudyr" = "http://cloudyr.github.io/drat"), INSTALL_opts = "--no-multiarch")
   })
   
   object <- basename(file)
@@ -46,5 +46,5 @@ putS3File <- function(file,
     object <- paste0(object, ".", uuid::UUIDgenerate())
   }
   
-  aws.s3::put_object(file = file, object = object, bucket = bucket, key = key, secret = secret, region = region)
+  aws.s3::put_object(file = file, object = object, bucket = bucket, key = key, secret = secret, region = region, check_region = FALSE)
 }
