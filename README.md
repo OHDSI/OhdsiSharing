@@ -10,6 +10,7 @@ Features
 ========
 
 - Encrypting and decrypting data using public-private key pairs.
+- Pushing files to Amazon S3 buckets.
 
 Examples
 ========
@@ -63,7 +64,7 @@ Development
 ===========
 OhdsiSharing is being developed in R Studio.
 
-###Development status
+### Development status
 [![Build Status](https://travis-ci.org/OHDSI/OhdsiSharing.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiSharing)
 
 Under development
