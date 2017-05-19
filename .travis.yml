@@ -70,7 +70,3 @@ notifications:
   email:
     on_success: change
     on_failure: change
-    
-env:
-  global:
-    - secure: MEEblXFIzHLAO8T8FopnutpZKM3zMzGwweRBEGziGjoJwLe4sDaieBAn3F0K+EN4fS9tIw2reCulYbsEw+LvkluhYEKfZTiIhcrrPYp79xhXuV8vOymfqI8Lwoy6zIqt0fXhXx8KHSZPg4+wJ6/NY6MWRFsjxZAPSS3ECBt4naQ=
