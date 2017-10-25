@@ -53,7 +53,7 @@ if ($monotonic == 0 & $ARGV[0] eq "--tag") {
 	$cmd = "git config user.name \"Marc A. Suchard\"; " .
 	       "git config user.email \"msuchard@ucla.edu\"; " .
 	       "git tag v$r_major.$r_minor.$r_mod ; " .
-	       "git push -q https://\$GH_TOKEN\@github.com/OHDSI/\$PKG_REPO.git --tags";
+	       "git push -q https://\$GH_TOKEN\@github.com/OHDSI/\$PKG_NAME.git --tags";
 
 	print "cmd: $cmd\n";
 
