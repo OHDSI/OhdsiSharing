@@ -7,4 +7,5 @@ extras
 build
 build.xml
 deploy.sh
+compare_versions
 java-src
