@@ -1,7 +1,7 @@
 library("testthat")
 
 
-# a test that will fail
-test_that("A doomed test", {
-  expect_true(FALSE)
+# a test that will pass
+test_that("An easy test", {
+  expect_true(TRUE)
 })
