@@ -34,4 +34,3 @@ decryptAndDecompressFolder("data.zip.enc", "test2", "private.key")
 }
 
 }
-

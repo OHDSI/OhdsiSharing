@@ -24,4 +24,3 @@ generateKeyPair("public.key", "private.key")
 }
 
 }
-

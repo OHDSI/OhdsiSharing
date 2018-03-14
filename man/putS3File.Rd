@@ -23,4 +23,3 @@ putS3File(file, bucket, region = "us-east-1", key, secret,
 \description{
 Put a local file into a remote S3 bucket
 }
-
