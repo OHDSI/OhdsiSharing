@@ -1,6 +1,8 @@
 OhdsiSharing
 ============
 
+[![Build Status](https://travis-ci.org/OHDSI/OhdsiSharing.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiSharing)
+
 Introduction
 ============
 
@@ -10,7 +12,7 @@ Features
 ========
 
 - Encrypting and decrypting data using public-private key pairs.
-- Pushing files to Amazon S3 buckets.
+- Uploading and downloading files to and from the OHDSI SFTP server.
 
 Examples
 ========
@@ -22,7 +24,7 @@ decryptFile("data.rds.enc", "data2.rds", "private.key")
 ```
 
 Technology
-============
+==========
 The OhdsiSharing package is an R package. Cryptography uses the Java Cryptography Architecture.
 
 System Requirements
@@ -39,33 +41,29 @@ Getting Started
 Use these commands in R to download and install the OhdsiSharing package:
 
 ```r
-install.packages("devtools")
-library("devtools")
-install_github("ohdsi/OhdsiSharing")
+install.packages("drat")
+drat::addRepo("OHDSI")
+install.packages("OhdsiSharing")
 ```
 
-If you want to use S3 functions, it is advisable to also install ```aws.s3```:
+User Documentation
+==================
+* Package manual: [OhdsiSharing.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/master/extras/OhdsiSharing.pdf)
 
-```r
-install.packages("aws.s3", repos = "http://cloudyr.github.io/drat")
-```
-
-Getting Involved
-=============
-* Package manual: [OhdsiSharing manual](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/master/extras/OhdsiSharing.pdf) 
+Support
+=======
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
-* We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
+* We use the <a href="https://github.com/OHDSI/OhdsiSharing/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
 License
 =======
-OhdsiSharing is licensed under Apache License 2.0
+OhdsiSharing is licensed under Apache License 2.0. OhdsiSharing uses the [Java Secure Channel (JSch) library](http://www.jcraft.com/jsch/), which is licensed under [BSD syle license](http://www.jcraft.com/jsch/LICENSE.txt).
 
 Development
 ===========
 OhdsiSharing is being developed in R Studio.
 
 ### Development status
-[![Build Status](https://travis-ci.org/OHDSI/OhdsiSharing.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiSharing)
 
 Under development
 

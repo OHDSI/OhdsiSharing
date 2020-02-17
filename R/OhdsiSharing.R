@@ -1,6 +1,4 @@
-# @file OhdsiSharing.R
-#
-# Copyright 2017 Observational Health Data Sciences and Informatics
+# Copyright 2020 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiSharing
 # 
@@ -15,6 +13,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+#' OhdsiSharing
+#'
+#' @docType package
+#' @name OhdsiSharing
+#' @importFrom utils install.packages menu
+NULL
 
 .onLoad <- function(libname, pkgname) {
   rJava::.jpackage(pkgname, lib.loc = libname)

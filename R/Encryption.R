@@ -1,6 +1,4 @@
-# @file Encryption.R
-#
-# Copyright 2017 Observational Health Data Sciences and Informatics
+# Copyright 2020 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiSharing
 # 

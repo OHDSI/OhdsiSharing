@@ -1,26 +1,19 @@
 Package: OhdsiSharing
 Type: Package
 Title: Package for sharing of the results of the OHDSI tools
-Version: 0.1.3
-Date: 2017-10-11
+Version: 0.2.0
+Date: 2020-02-17
 Author: Martijn Schuemie [aut, cre],
-    Marc Suchard [aut]
+    Marc Suchard [aut],
+    Lee Evans [aut]
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Package for sharing of the results of the OHDSI tools, with
-    functions for encrypting results and sending results through FTP and S3 to a central
+    functions for encrypting results and sending results through SFTP to a central
     site.
 Imports:
     rJava,
-    aws.signature,
-    httr (>= 1.1.0),
-    XML,
-    uuid,
-    xml2,
-    base64enc,
-    digest,
-    curl
+    ParallelLogger
 Suggests:
-    aws.s3,
     testthat
 License: Apache License
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2

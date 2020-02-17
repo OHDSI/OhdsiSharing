@@ -1,6 +1,4 @@
-# @file PackageMaintenance
-#
-# Copyright 2017 Observational Health Data Sciences and Informatics
+# Copyright 2020 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiSharing
 # 
@@ -20,8 +18,10 @@
 OhdsiRTools::formatRFolder()
 OhdsiRTools::checkUsagePackage("OhdsiSharing")
 OhdsiRTools::updateCopyrightYearFolder()
+devtools::spell_check()
 
 # Create manual and vignettes:
-shell("rm extras/OhdsiSharing.pdf")
+unlink("extras/OhdsiSharing.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/OhdsiSharing.pdf")
 
+pkgdown::build_site()
