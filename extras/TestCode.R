@@ -20,7 +20,9 @@ sftpPutFile(connection, "c:/temp/sftp/cars.csv")
 sftpDisconnect(connection)
 
 # Three in one: connect - put - disconnect
-sftpUploadFile("c:/temp/sftp/study-coordinator-test", "study-coordinator-test", "c:/temp/sftp/test.csv")
+sftpUploadFile("c:/temp/sftp/study-coordinator-test",
+               "study-coordinator-test",
+               "c:/temp/sftp/test.csv")
 
 # Encryption --------------------------------------------------------------
 
