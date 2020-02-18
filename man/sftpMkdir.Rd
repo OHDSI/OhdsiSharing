@@ -7,7 +7,8 @@
 sftpMkdir(sftpConnection, remoteFolder)
 }
 \arguments{
-\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}} function.}
+\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}}
+function.}
 
 \item{remoteFolder}{The folder on the server to create.}
 }

@@ -5,11 +5,20 @@ connection <- sftpConnect("c:/temp/sftp/study-coordinator-test", "study-coordina
 
 sftpLs(connection)
 
-sftpGetFile(connection, "cars.csv", "c:/temp/sftp/test.csv")
+sftpGetFiles(connection, "einots6u_test.csv", "c:/temp/sftp/test.csv")
+
+files <- sftpLs(connection)
+sftpGetFiles(connection, files$fileName, localFolder = "c:/temp/sftp")
+
 
 sftpRename(connection, "cars4.csv", "cars5.csv")
 
 sftpRm(connection, "cars.csv")
+
+files <- sftpLs(connection)
+sftpRm(connection, files$fileName)
+
+
 
 sftpMkdir(connection, "testDir")
 
@@ -20,9 +29,9 @@ sftpPutFile(connection, "c:/temp/sftp/cars.csv")
 sftpDisconnect(connection)
 
 # Three in one: connect - put - disconnect
-sftpUploadFile("c:/temp/sftp/study-coordinator-test",
-               "study-coordinator-test",
-               "c:/temp/sftp/test.csv")
+sftpUploadFile("c:/temp/sftp/study-data-site-test",
+               "study-data-site-test",
+               "c:/temp/sftp/cars.csv")
 
 # Encryption --------------------------------------------------------------
 

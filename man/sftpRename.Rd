@@ -7,7 +7,8 @@
 sftpRename(sftpConnection, oldRemoteFilename, newRemoteFilename)
 }
 \arguments{
-\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}} function.}
+\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}}
+function.}
 
 \item{oldRemoteFilename}{The file on the server to rename.}
 

@@ -7,7 +7,8 @@
 sftPwd(sftpConnection)
 }
 \arguments{
-\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}} function.}
+\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}}
+function.}
 }
 \value{
 A character string representing the current remote folder name.

@@ -32,7 +32,7 @@ sftpConnect <- function(privateKeyFileName, userName) {
     stop("Private key file does not contain RSA private key")
   rm(key)
   userName <- as.character(userName)
-
+  
   ParallelLogger::logInfo("Connecting to OHDSI SFTP server")
   connection <- rJava::.jnew("org.ohdsi.sharing.Sftp", privateKeyFileName, userName)
   sftpConnection <- list(connection = connection)
@@ -47,7 +47,7 @@ sftpConnect <- function(privateKeyFileName, userName) {
 #'
 #' @export
 sftpDisconnect <- function(sftpConnection) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
   sftpConnection$connection$disconnect()
   ParallelLogger::logInfo("Disconnected from OHDSI SFTP server")
@@ -62,25 +62,34 @@ sftpDisconnect <- function(sftpConnection) {
 #'
 #' @export
 sftpPutFile <- function(sftpConnection, localFileName, remoteFileName = basename(localFileName)) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
   if (!file.exists(localFileName))
     stop("Local file ", localFileName, " does not exists.")
   sftpConnection$connection$putFile(localFileName, remoteFileName)
 }
 
-#' Get a file from the SFTP server
+#' Get one or more files from the SFTP server
 #'
 #' @param sftpConnection   An SftpConnection object as created by the \code{\link{sftpConnect}}
 #'                         function.
-#' @param localFileName    The name the file should have locally.
-#' @param remoteFileName   The name the file on the server.
+#' @param localFileNames   The name the file(s) should have locally. If not provided, the files will
+#'                         be given the same names as on the server.
+#' @param remoteFileNames  The name of the file(s) to get from the server.
+#' @param localFolder      The path of a local folder where all files will be stored. Is ignored
+#'                         if localFileNames is provided.
 #'
 #' @export
-sftpGetFile <- function(sftpConnection, remoteFileName, localFileName = remoteFileName) {
-  if (!class(sftpConnection) == "SftpConnection")
+sftpGetFiles <- function(sftpConnection, 
+                         remoteFileNames,
+                         localFolder = getwd(),
+                         localFileNames = file.path(localFolder, remoteFileNames)) {
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
-  sftpConnection$connection$getFile(remoteFileName, localFileName)
+  
+  for (i in 1:length(remoteFileNames)) {
+    sftpConnection$connection$getFile(remoteFileNames[i], localFileNames[i])
+  }
 }
 
 #' List the files in folder on the server.
@@ -94,14 +103,21 @@ sftpGetFile <- function(sftpConnection, remoteFileName, localFileName = remoteFi
 #'
 #' @export
 sftpLs <- function(sftpConnection, remoteFolder = "./") {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
   files <- sftpConnection$connection$ls(remoteFolder)
-  offset <- length(files)/2
-  files <- data.frame(fileName = files[1:offset],
-                      type = as.factor(files[(offset + 1):(2 * offset)]),
-                      stringsAsFactors = FALSE)
-  return(files)
+  if (length(files) == 0) {
+    files <- data.frame(fileName = "dummy",
+                        type = as.factor("dummy"),
+                        stringsAsFactors = FALSE)
+    return(files[files$fileName != "dummy", ])
+  } else {
+    offset <- length(files)/2
+    files <- data.frame(fileName = files[1:offset],
+                        type = as.factor(files[(offset + 1):(2 * offset)]),
+                        stringsAsFactors = FALSE)
+    return(files)
+  }
 }
 
 #' Get the present working directory
@@ -114,7 +130,7 @@ sftpLs <- function(sftpConnection, remoteFolder = "./") {
 #'
 #' @export
 sftPwd <- function(sftpConnection) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
   return(sftpConnection$connection$pwd())
 }
@@ -127,9 +143,9 @@ sftPwd <- function(sftpConnection) {
 #'
 #' @export
 sftpCd <- function(sftpConnection, remoteFolder) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
-  return(sftpConnection$connection$cd(remoteFolder))
+  sftpConnection$connection$cd(remoteFolder)
 }
 
 #' Make a directory
@@ -140,9 +156,9 @@ sftpCd <- function(sftpConnection, remoteFolder) {
 #'
 #' @export
 sftpMkdir <- function(sftpConnection, remoteFolder) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
-  return(sftpConnection$connection$mkdir(remoteFolder))
+  sftpConnection$connection$mkdir(remoteFolder)
 }
 
 #' Remove a directory
@@ -153,22 +169,24 @@ sftpMkdir <- function(sftpConnection, remoteFolder) {
 #'
 #' @export
 sftpRmdir <- function(sftpConnection, remoteFolder) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
-  return(sftpConnection$connection$rmdir(remoteFolder))
+  sftpConnection$connection$rmdir(remoteFolder)
 }
 
-#' Remove a file
+#' Remove one or more files
 #'
 #' @param sftpConnection   An SftpConnection object as created by the \code{\link{sftpConnect}}
 #'                         function.
-#' @param remoteFile       The file on the server to remove.
+#' @param remoteFiles      The file(s) on the server to remove.
 #'
 #' @export
-sftpRm <- function(sftpConnection, remoteFile) {
-  if (!class(sftpConnection) == "SftpConnection")
+sftpRm <- function(sftpConnection, remoteFiles) {
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
-  return(sftpConnection$connection$rm(remoteFile))
+  for (remoteFile in remoteFiles) {
+    sftpConnection$connection$rm(remoteFile)
+  }
 }
 
 #' Rename a file or folder
@@ -180,9 +198,9 @@ sftpRm <- function(sftpConnection, remoteFile) {
 #'
 #' @export
 sftpRename <- function(sftpConnection, oldRemoteFilename, newRemoteFilename) {
-  if (!class(sftpConnection) == "SftpConnection")
+  if (class(sftpConnection) != "SftpConnection")
     stop("Argument is not of type SftpConnection")
-  return(sftpConnection$connection$rename(oldRemoteFilename, newRemoteFilename))
+  sftpConnection$connection$rename(oldRemoteFilename, newRemoteFilename)
 }
 
 #' Upload a single file to the OHDSI SFTP server
@@ -201,10 +219,10 @@ sftpRename <- function(sftpConnection, oldRemoteFilename, newRemoteFilename) {
 sftpUploadFile <- function(privateKeyFileName, userName, fileName) {
   connection <- sftpConnect(privateKeyFileName, userName)
   on.exit(sftpDisconnect(connection))
-
+  
   remoteFileName <- basename(fileName)
   remoteFileName <- paste(paste(sample(c(letters, 0:9), 8),
                                 collapse = ""), remoteFileName, sep = "_")
   ParallelLogger::logInfo("Uploading ", fileName, " to ", remoteFileName, " on OHDSI SFTP server")
-  sftpPutFile(connection, fileName)
+  sftpPutFile(connection, fileName, remoteFileName)
 }

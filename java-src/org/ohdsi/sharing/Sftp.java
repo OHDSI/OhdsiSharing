@@ -2,7 +2,7 @@ package org.ohdsi.sharing;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Vector;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -28,7 +28,7 @@ public class Sftp {
 		try {
 //			sftp.rm("cars5.csv");
 			System.out.println(sftp.pwd());
-			String[] files = sftp.ls("./");	
+			String[] files = sftp.ls("./");
 			for (int i = 0; i < files.length / 2; i++) {
 				System.out.println(files[i] + "\t" + files[i + files.length / 2]);
 			}
@@ -44,20 +44,23 @@ public class Sftp {
 		jsch.setKnownHosts(Sftp.class.getResourceAsStream("ohdsi-known-hosts"));
 		session = jsch.getSession(userName, "sftp.ohdsi.org");
 		java.util.Properties config = new java.util.Properties();
-		config.put("StrictHostKeyChecking", "no");
+		config.put("StrictHostKeyChecking", "yes");
 		session.setConfig(config);
 		session.connect();
 		channel = (ChannelSftp) session.openChannel("sftp");
 		channel.connect();
 	}
 
-	public void putFile(String localFileName, String remoteFilename) throws FileNotFoundException {
-		File f = new File(localFileName);
+	public void putFile(String localFileName, String remoteFilename) throws IOException {
+		File file = new File(localFileName);
+		FileInputStream fileInputStream = new FileInputStream(file);
 		try {
-			channel.put(new FileInputStream(f), remoteFilename);
+			channel.put(fileInputStream, remoteFilename);
 		} catch (SftpException e) {
 			throw new RuntimeException(
 					"Unable to write file to " + remoteFilename + ". Reason: " + e.getLocalizedMessage());
+		} finally {
+			fileInputStream.close();
 		}
 	}
 
@@ -84,17 +87,18 @@ public class Sftp {
 	@SuppressWarnings("unchecked")
 	public String[] ls(String remoteFolder) throws SftpException {
 		Vector<LsEntry> fileVector = channel.ls(remoteFolder);
-		// Don't know how to process complex Java objects in R, so returning a string array, where first 
+		// Don't know how to process complex Java objects in R, so returning a string
+		// array, where first
 		// half is file names, second half is file types.
 		String[] result = new String[fileVector.size() * 2];
 		int offset = fileVector.size();
 		for (int i = 0; i < fileVector.size(); i++) {
 			LsEntry entry = (LsEntry) fileVector.get(i);
-			if (entry.getAttrs().isDir()) 
+			if (entry.getAttrs().isDir())
 				result[offset + i] = "DIR";
 			else if (entry.getAttrs().isLink())
 				result[offset + i] = "LINK";
-			else 
+			else
 				result[offset + i] = "FILE";
 			result[i] = entry.getFilename();
 		}

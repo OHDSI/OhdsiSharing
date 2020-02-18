@@ -3,9 +3,11 @@ Type: Package
 Title: Package for sharing of the results of the OHDSI tools
 Version: 0.2.0
 Date: 2020-02-17
-Author: Martijn Schuemie [aut, cre],
-    Marc Suchard [aut],
-    Lee Evans [aut]
+Authors@R: c(
+    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
+    person("Marc", "Suchard", role = c("aut")),
+    person("Lee", "Evans", role = c("aut"))
+    )
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Package for sharing of the results of the OHDSI tools, with
     functions for encrypting results and sending results through SFTP to a central

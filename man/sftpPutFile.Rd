@@ -11,7 +11,8 @@ sftpPutFile(
 )
 }
 \arguments{
-\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}} function.}
+\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}}
+function.}
 
 \item{localFileName}{The path to the local file to upload.}
 

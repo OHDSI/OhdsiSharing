@@ -7,7 +7,8 @@
 sftpDisconnect(sftpConnection)
 }
 \arguments{
-\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}} function.}
+\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}}
+function.}
 }
 \description{
 Disconnect from the OHDSI SFTP server.

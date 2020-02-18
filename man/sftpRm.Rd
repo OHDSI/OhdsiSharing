@@ -2,15 +2,16 @@
 % Please edit documentation in R/Sftp.R
 \name{sftpRm}
 \alias{sftpRm}
-\title{Remove a file}
+\title{Remove one or more files}
 \usage{
-sftpRm(sftpConnection, remoteFile)
+sftpRm(sftpConnection, remoteFiles)
 }
 \arguments{
-\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}} function.}
+\item{sftpConnection}{An SftpConnection object as created by the \code{\link{sftpConnect}}
+function.}
 
-\item{remoteFile}{The file on the server to remove.}
+\item{remoteFiles}{The file(s) on the server to remove.}
 }
 \description{
-Remove a file
+Remove one or more files
 }

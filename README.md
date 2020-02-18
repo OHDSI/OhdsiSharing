@@ -57,7 +57,7 @@ Support
 
 License
 =======
-OhdsiSharing is licensed under Apache License 2.0. OhdsiSharing uses the [Java Secure Channel (JSch) library](http://www.jcraft.com/jsch/), which is licensed under [BSD syle license](http://www.jcraft.com/jsch/LICENSE.txt).
+OhdsiSharing is licensed under Apache License 2.0. OhdsiSharing uses the [Java Secure Channel (JSch) library](http://www.jcraft.com/jsch/), which is licensed under [BSD style license](http://www.jcraft.com/jsch/LICENSE.txt).
 
 Development
 ===========

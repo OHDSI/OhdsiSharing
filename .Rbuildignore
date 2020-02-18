@@ -9,3 +9,6 @@ build.xml
 deploy.sh
 compare_versions
 java-src
+bin
+_pkgdown.yml
+docs

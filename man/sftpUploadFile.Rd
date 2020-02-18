@@ -14,8 +14,8 @@ sftpUploadFile(privateKeyFileName, userName, fileName)
 \item{fileName}{A character string denoting the path to file to upload.}
 }
 \description{
-This function combines calls to the \code{\link{sftpConnect}}, \code{\link{sftpPutFile}},
-and \code{\link{sftpDisconnect}} functions.
-
-A random string will be prefixed to the file name to prevent overwriting existing files on the server.
+This function combines calls to the \code{\link{sftpConnect}}, \code{\link{sftpPutFile}}, and
+\code{\link{sftpDisconnect}} functions.
+A random string will be prefixed to the file name to prevent overwriting existing files on the
+server.
 }
