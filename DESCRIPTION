@@ -12,6 +12,8 @@ Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Package for sharing of the results of the OHDSI tools, with
     functions for encrypting results and sending results through SFTP to a central
     site.
+URL: https://ohdsi.github.io/OhdsiSharing, https://github.com/OHDSI/OhdsiSharing
+BugReports: https://github.com/OHDSI/OhdsiSharing/issues
 Imports:
     rJava,
     ParallelLogger
