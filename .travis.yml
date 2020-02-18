@@ -9,6 +9,7 @@ branches:
 r_packages:
   - covr
   - drat
+  - devtools
 
 before_script:
   - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
@@ -22,11 +23,6 @@ script:
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && perl compare_versions --tag && bash deploy.sh && curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
-
-#before_deploy:
-#  - compare_versions
-#  - git config user.name "Marc A. Suchard"
-#  - git config user.email "msuchard@ucla.edu"
 
 notifications:
   recipients:
