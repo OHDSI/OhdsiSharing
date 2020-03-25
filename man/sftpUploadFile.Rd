@@ -4,17 +4,19 @@
 \alias{sftpUploadFile}
 \title{Upload a single file to the OHDSI SFTP server}
 \usage{
-sftpUploadFile(privateKeyFileName, userName, fileName)
+sftpUploadFile(privateKeyFileName, userName, remoteFolder = ".", fileName)
 }
 \arguments{
 \item{privateKeyFileName}{A character string denoting the path to an RSA private key.}
 
 \item{userName}{A character string containing the user name.}
 
+\item{remoteFolder}{The remote folder to upload the file to.}
+
 \item{fileName}{A character string denoting the path to file to upload.}
 }
 \description{
-This function combines calls to the \code{\link{sftpConnect}}, \code{\link{sftpPutFile}}, and
+This function combines calls to the \code{\link{sftpConnect}}, \code{\link{sftpPutFile}}, and 
 \code{\link{sftpDisconnect}} functions.
 A random string will be prefixed to the file name to prevent overwriting existing files on the
 server.

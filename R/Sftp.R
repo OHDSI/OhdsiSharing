@@ -206,23 +206,27 @@ sftpRename <- function(sftpConnection, oldRemoteFilename, newRemoteFilename) {
 #' Upload a single file to the OHDSI SFTP server
 #'
 #' @description
-#' This function combines calls to the \code{\link{sftpConnect}}, \code{\link{sftpPutFile}}, and
+#' This function combines calls to the \code{\link{sftpConnect}}, \code{\link{sftpPutFile}}, and 
 #' \code{\link{sftpDisconnect}} functions.
 #' A random string will be prefixed to the file name to prevent overwriting existing files on the
 #' server.
 #'
 #' @param privateKeyFileName   A character string denoting the path to an RSA private key.
 #' @param userName             A character string containing the user name.
+#' @param remoteFolder         The remote folder to upload the file to.
 #' @param fileName             A character string denoting the path to file to upload.
 #'
 #' @export
-sftpUploadFile <- function(privateKeyFileName, userName, fileName) {
+sftpUploadFile <- function(privateKeyFileName, userName, remoteFolder = ".", fileName) {
   connection <- sftpConnect(privateKeyFileName, userName)
   on.exit(sftpDisconnect(connection))
   
   remoteFileName <- basename(fileName)
   remoteFileName <- paste(paste(sample(c(letters, 0:9), 8),
                                 collapse = ""), remoteFileName, sep = "_")
+  if (remoteFolder != ".") {
+    remoteFileName <- paste(remoteFolder, remoteFileName, sep = "/")
+  }
   ParallelLogger::logInfo("Uploading ", fileName, " to ", remoteFileName, " on OHDSI SFTP server")
   sftpPutFile(connection, fileName, remoteFileName)
 }

@@ -3,6 +3,8 @@ library(OhdsiSharing)
 # SFTP --------------------------------------------------------------------
 connection <- sftpConnect("c:/temp/sftp/study-coordinator-test", "study-coordinator-test")
 
+connection <- sftpConnect("c:/temp/sftp/study-data-site-test", "study-data-site-test")
+
 sftpLs(connection)
 
 sftpGetFiles(connection, "einots6u_test.csv", "c:/temp/sftp/test.csv")
@@ -19,19 +21,30 @@ files <- sftpLs(connection)
 sftpRm(connection, files$fileName)
 
 
-
 sftpMkdir(connection, "testDir")
+
+sftpCd(connection, "testDir")
+
+sftPwd(connection)
+
+sftpCd(connection, "..")
+
+sftPwd(connection)
 
 sftpRmdir(connection, "testDir")
 
 sftpPutFile(connection, "c:/temp/sftp/cars.csv")
 
+sftpPutFile(connection, "c:/temp/sftp/cars.csv", remoteFileName = "testDir/test.csv")
+
+
 sftpDisconnect(connection)
 
 # Three in one: connect - put - disconnect
-sftpUploadFile("c:/temp/sftp/study-data-site-test",
-               "study-data-site-test",
-               "c:/temp/sftp/cars.csv")
+sftpUploadFile(privateKeyFileName = "c:/temp/sftp/study-data-site-test",
+               userName = "study-data-site-test",
+               remoteFolder = "testDir",
+               fileName = "c:/temp/sftp/cars.csv")
 
 # Encryption --------------------------------------------------------------
 

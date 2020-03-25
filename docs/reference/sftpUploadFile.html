@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Upload a single file to the OHDSI SFTP server — sftpUploadFile" />
-<meta property="og:description" content="This function combines calls to the sftpConnect, sftpPutFile, and
+<meta property="og:description" content="This function combines calls to the sftpConnect, sftpPutFile, and 
 sftpDisconnect functions.
 A random string will be prefixed to the file name to prevent overwriting existing files on the
 server." />
@@ -72,7 +72,7 @@ server." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiSharing</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -117,13 +117,13 @@ server." />
     </div>
 
     <div class="ref-description">
-    <p>This function combines calls to the <code><a href='sftpConnect.html'>sftpConnect</a></code>, <code><a href='sftpPutFile.html'>sftpPutFile</a></code>, and
+    <p>This function combines calls to the <code><a href='sftpConnect.html'>sftpConnect</a></code>, <code><a href='sftpPutFile.html'>sftpPutFile</a></code>, and 
 <code><a href='sftpDisconnect.html'>sftpDisconnect</a></code> functions.
 A random string will be prefixed to the file name to prevent overwriting existing files on the
 server.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sftpUploadFile</span>(<span class='no'>privateKeyFileName</span>, <span class='no'>userName</span>, <span class='no'>fileName</span>)</pre>
+    <pre class="usage"><span class='fu'>sftpUploadFile</span>(<span class='no'>privateKeyFileName</span>, <span class='no'>userName</span>, <span class='kw'>remoteFolder</span> <span class='kw'>=</span> <span class='st'>"."</span>, <span class='no'>fileName</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,6 +135,10 @@ server.</p>
     <tr>
       <th>userName</th>
       <td><p>A character string containing the user name.</p></td>
+    </tr>
+    <tr>
+      <th>remoteFolder</th>
+      <td><p>The remote folder to upload the file to.</p></td>
     </tr>
     <tr>
       <th>fileName</th>
