@@ -4,6 +4,3 @@
 \name{OhdsiSharing}
 \alias{OhdsiSharing}
 \title{OhdsiSharing}
-\description{
-OhdsiSharing
-}

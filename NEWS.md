@@ -1,4 +1,4 @@
-OhdsiSharing 0.2.0
+OhdsiSharing 0.2.1
 ==================
 
 Changes:
