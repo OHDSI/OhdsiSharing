@@ -25,3 +25,4 @@ unlink("extras/OhdsiSharing.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/OhdsiSharing.pdf")
 
 pkgdown::build_site()
+OhdsiRTools::fixHadesLogo()

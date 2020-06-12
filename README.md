@@ -3,6 +3,8 @@ OhdsiSharing
 
 [![Build Status](https://travis-ci.org/OHDSI/OhdsiSharing.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiSharing)
 
+OhdsiSharing is part of [HADES](https://ohdsi.github.io/Hades).
+
 Introduction
 ============
 
@@ -29,31 +31,36 @@ The OhdsiSharing package is an R package. Cryptography uses the Java Cryptograph
 
 System Requirements
 ===================
-Running the package requires R. Also requires Java 1.6 or higher.
-
-Dependencies
-============
- * There are no dependencies.
+Running the package requires R. Also requires Java 1.8 or higher.
 
 Getting Started
 ===============
 
-Use these commands in R to download and install the OhdsiSharing package:
+1. See the instructions [here](https://ohdsi.github.io/Hades/rSetup.html) for configuring your R environment, including Java.
 
-```r
-install.packages("drat")
-drat::addRepo("OHDSI")
-install.packages("OhdsiSharing")
-```
+2. Use these commands in R to download and install the OhdsiSharing package:
+
+    ```r
+    install.packages("drat")
+    drat::addRepo("OHDSI")
+    install.packages("OhdsiSharing")
+    ```
 
 User Documentation
 ==================
+Documentation can be found on the [package website](https://ohdsi.github.io/OhdsiSharing).
+
+PDF versions of the documentation are also available:
 * Package manual: [OhdsiSharing.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/master/extras/OhdsiSharing.pdf)
 
 Support
 =======
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="https://github.com/OHDSI/OhdsiSharing/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
+
+Contributing
+============
+Read [here](https://ohdsi.github.io/Hades/contribute.html) how you can contribute to this package.
 
 License
 =======

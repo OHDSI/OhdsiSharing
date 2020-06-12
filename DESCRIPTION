@@ -1,6 +1,7 @@
 Package: OhdsiSharing
 Type: Package
 Title: Package for sharing of the results of the OHDSI tools
+Description: Securely sharing (large) files between OHDSI collaborators.
 Version: 0.2.1
 Date: 2020-03-25
 Authors@R: c(
