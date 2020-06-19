@@ -74,5 +74,3 @@ OhdsiSharing is being developed in R Studio.
 ### Development status
 
 Under development
-
-
