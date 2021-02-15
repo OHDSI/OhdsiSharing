@@ -1,7 +1,7 @@
 OhdsiSharing
 ============
 
-[![Build Status](https://travis-ci.org/OHDSI/OhdsiSharing.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiSharing)
+[![Build Status](https://github.com/OHDSI/OhdsiSharing/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/OhdsiSharing/actions?query=workflow%3AR-CMD-check)
 [![codecov.io](https://codecov.io/github/OHDSI/OhdsiSharing/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiSharing?branch=master)
 
 OhdsiSharing is part of [HADES](https://ohdsi.github.io/Hades).
