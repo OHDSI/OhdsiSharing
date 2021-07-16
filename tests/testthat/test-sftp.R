@@ -180,7 +180,7 @@ test_that("sftpCd runs", {
   
   # check with getDir
   res <- sftPwd(sftpConnection = sftpConnection)
-  expect_equal(res, psate0('/',appendRandom('cdTest')))
+  expect_equal(res, paste0('/',appendRandom('cdTest')))
   
   sftpCd(sftpConnection = sftpConnection,
          remoteFolder = '/')
