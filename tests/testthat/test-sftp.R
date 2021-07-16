@@ -330,7 +330,7 @@ test_that("sftpRename rename works", {
              newRemoteFilename = 'renameTestWorked')
   
   new <- sftpLs(sftpConnection = sftpConnection)
-  expect_equals(new$fileName,"renameTestWorked")
+  expect_equal(new$fileName,"renameTestWorked")
   
 })
 
@@ -366,7 +366,7 @@ sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
 sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'emptyDir')
 sftpRm(sftpConnection = sftpConnection, remoteFiles = 'testEmpty')
 sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'cdTest')
-sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'allTest')
+#sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'allTest')
 
 sftpDisconnect(sftpConnection)
 
