@@ -3,6 +3,12 @@ library(testthat)
 context("sftp")
 
 
+randVar <- rawToChar(as.raw(sample(c(65:90,97:122), 5, replace=T)))
+appendRandom <- function(x, rand = randVar){
+  return(paste(rand, x, sep='_'))
+}
+
+
 key <- Sys.getenv('SFTP_PRIVATE_KEY')
 tempfileMain <- tempfile('test')
 write(key, file = tempfileMain)
@@ -98,7 +104,7 @@ test_that("sftpPutFile runs without error", {
   
   expect_true(is.null(sftpPutFile(sftpConnection = sftpConnection, 
                            localFileName = tempFile,
-                           remoteFileName = 'testEmpty')))
+                           remoteFileName = appendRandom('testEmpty'))))
   
 })
 
@@ -117,7 +123,7 @@ test_that("sftpGetFiles works", {
   
   tempdir <- tempdir('test')
   sftpGetFiles(sftpConnection = sftpConnection, 
-                            remoteFileNames = 'testEmpty',
+                            remoteFileNames = appendRandom('testEmpty'),
                             localFolder = tempdir, 
                             localFileNames = file.path(tempdir, 'testEmpty'))
   
@@ -131,7 +137,7 @@ test_that("sftpGetFiles works renames", {
   
   tempdir <- tempdir('test')
   sftpGetFiles(sftpConnection = sftpConnection, 
-               remoteFileNames = 'testEmpty',
+               remoteFileNames = appendRandom('testEmpty'),
                localFolder = tempdir, 
                localFileNames = file.path(tempdir, 'testEmptyRe'))
   
@@ -166,15 +172,15 @@ test_that("sftpCd sftpConnection input error", {
 test_that("sftpCd runs", { 
   
   sftpMkdir(sftpConnection = sftpConnection, 
-            remoteFolder = './cdTest')
+            remoteFolder = appendRandom('cdTest'))
   
   res <- sftpCd(sftpConnection = sftpConnection,
-                remoteFolder = './cdTest')
+                remoteFolder = appendRandom('cdTest'))
   expect_true(is.null(res))
   
   # check with getDir
   res <- sftPwd(sftpConnection = sftpConnection)
-  expect_equal(res, '/cdTest')
+  expect_equal(res, psate0('/',appendRandom('cdTest')))
   
   sftpCd(sftpConnection = sftpConnection,
          remoteFolder = '/')
@@ -184,14 +190,14 @@ test_that("sftpCd runs", {
 test_that("sftpMkdir connection input error", { 
   
   expect_error(sftpMkdir(sftpConnection = list(), 
-            remoteFolder = './testDir'))
+            remoteFolder = paste0('./',appendRandom('testDir'))))
   
 })
 
 test_that("sftpMkdir runs", { 
   
   res <- sftpMkdir(sftpConnection = sftpConnection, 
-                   remoteFolder = './testDir')
+                   remoteFolder = paste0('./',appendRandom('testDir')))
   expect_true(is.null(res))
   
 })
@@ -207,7 +213,7 @@ test_that("sftpRmdir connection input error", {
 test_that("sftpRmdir runs", { 
   
   res <- sftpRmdir(sftpConnection = sftpConnection, 
-                   remoteFolder = './testDir')
+                   remoteFolder = paste0('./',appendRandom('testDir')))
   expect_true(is.null(res))
   
 })
@@ -217,7 +223,7 @@ test_that("sftpRmdir runs", {
 test_that("sftpRmdir error when directory not exists (previously deleted)", { 
   
   expect_error(sftpRmdir(sftpConnection = sftpConnection, 
-                         remoteFolder = './testDir'))
+                         remoteFolder = paste0('./',appendRandom('testDir'))))
   
 })
 
@@ -234,10 +240,11 @@ test_that("sftpLs returns empty data.frame when dir empty", {
   
   
   #create an empty dir
-  sftpMkdir(sftpConnection = sftpConnection, remoteFolder = "./emptyDir")
+  sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
+  sftpMkdir(sftpConnection = sftpConnection, remoteFolder = paste0("./",appendRandom("emptyDir")))
     
   result <- sftpLs(sftpConnection = sftpConnection, 
-                      remoteFolder = "./emptyDir")
+                      remoteFolder = paste0("./",appendRandom("emptyDir")))
   
   
   expect_true(nrow(result)==0)
@@ -278,8 +285,8 @@ test_that("sftpRm removes correctly", {
   write('test file 2', tempLoc2)
   
   sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-  sftpMkdir(sftpConnection = sftpConnection, remoteFolder = 'sftpRm2')
-  sftpCd(sftpConnection = sftpConnection, remoteFolder = '/sftpRm2')
+  sftpMkdir(sftpConnection = sftpConnection, remoteFolder = appendRandom('sftpRm2'))
+  sftpCd(sftpConnection = sftpConnection, remoteFolder = paste0('/',appendRandom('sftpRm2')))
   
   sftpPutFile(sftpConnection = sftpConnection, 
               localFileName = tempLoc1)
@@ -295,7 +302,7 @@ test_that("sftpRm removes correctly", {
   # check not there:
   expect_true(nrow(sftpLs(sftpConnection = sftpConnection))==0)
   sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-  sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'sftpRm2')
+  sftpRmdir(sftpConnection = sftpConnection, remoteFolder = appendRandom('sftpRm2'))
 })
 
 
@@ -313,8 +320,8 @@ test_that("sftpRename error with incorrect connection", {
 test_that("sftpRename rename works", { 
   
   sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-  sftpMkdir(sftpConnection = sftpConnection, remoteFolder = 'renameTest')
-  sftpCd(sftpConnection = sftpConnection, remoteFolder = 'renameTest')
+  sftpMkdir(sftpConnection = sftpConnection, remoteFolder = appendRandom('renameTest'))
+  sftpCd(sftpConnection = sftpConnection, remoteFolder = appendRandom('renameTest'))
   
   tempLoc1 <- tempfile('rm')
   
@@ -342,11 +349,11 @@ test_that("sftpUploadFile works", {
   
   sftpUploadFile(privateKeyFileName = tempfileMain, 
                  userName = username, 
-                 remoteFolder = "./allTest", 
+                 remoteFolder = paste0("/",appendRandom("allTest")), 
                  fileName = tempFile)
   
   sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-  sftpCd(sftpConnection = sftpConnection, remoteFolder = 'allTest')
+  sftpCd(sftpConnection = sftpConnection, remoteFolder = appendRandom('allTest'))
   resFiles <- sftpLs(sftpConnection = sftpConnection)
   sftpRm(sftpConnection = sftpConnection, remoteFiles = resFiles$fileName)
   
@@ -357,16 +364,25 @@ test_that("sftpUploadFile works", {
 
 # cleanup
 sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-sftpCd(sftpConnection = sftpConnection, remoteFolder = 'renameTest')
+sftpCd(sftpConnection = sftpConnection, remoteFolder = appendRandom('renameTest'))
 sftpRm(sftpConnection = sftpConnection, remoteFiles = 'renameTestWorked')
-sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'renameTest')
 
 sftpCd(sftpConnection = sftpConnection, remoteFolder = '/')
-sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'emptyDir')
-sftpRm(sftpConnection = sftpConnection, remoteFiles = 'testEmpty')
-sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'cdTest')
-#sftpRmdir(sftpConnection = sftpConnection, remoteFolder = 'allTest')
+filesToClean <- sftpLs(sftpConnection = sftpConnection)
+filesToClean <- filesToClean[grep(paste0(randVar,'_'), filesToClean$fileName),]
+if(nrow(filesToClean)>0){
+  
+  for(i in 1:nrow(filesToClean)){
+    
+    if(filesToClean$type[i]=='DIR'){
+      sftpRmdir(sftpConnection = sftpConnection, remoteFolder = filesToClean$fileName[i])
+    }else{
+      sftpRm(sftpConnection = sftpConnection, remoteFiles = filesToClean$fileName[i])
+    }
+    
+  }
+  
+}
 
 sftpDisconnect(sftpConnection)
 
