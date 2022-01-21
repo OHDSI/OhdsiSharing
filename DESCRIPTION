@@ -4,11 +4,11 @@ Title: Package for sharing of the results of the OHDSI tools
 Version: 0.2.2
 Date: 2020-06-18
 Authors@R: c(
-    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
-    person("Marc", "Suchard", role = c("aut")),
+    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut")),
+    person("Marc", "Suchard", , "msuchard@ucla.edu", role = c("aut", "cre")),
     person("Lee", "Evans", role = c("aut"))
     )
-Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
+Maintainer: Marc Suchard <msuchard@ucla.edu>
 Description: Package for sharing of the results of the OHDSI tools, with
     functions for encrypting results and sending results through SFTP to a central
     site.
@@ -20,4 +20,4 @@ Imports:
 Suggests:
     testthat
 License: Apache License
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

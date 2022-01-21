@@ -20,11 +20,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Martijn Schuemie \email{schuemie@ohdsi.org}
+\strong{Maintainer}: Marc Suchard \email{msuchard@ucla.edu}
 
 Authors:
 \itemize{
-  \item Marc Suchard
+  \item Martijn Schuemie \email{schuemie@ohdsi.org}
   \item Lee Evans
 }
 
