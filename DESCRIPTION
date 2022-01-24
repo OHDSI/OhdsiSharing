@@ -4,13 +4,13 @@ Title: Package for sharing the results of the OHDSI tools
 Version: 0.2.2
 Date: 2020-06-18
 Authors@R: c(
-    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
-    person("Marc", "Suchard", role = c("aut")),
+    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut")),
+    person("Marc", "Suchard", , "msuchard@ucla.edu", role = c("aut", "cre")),
     person("Lee", "Evans", role = c("aut"))
     )
-Maintainer: Lee Evans <evans@ohdsi.org>
-Description: Package for sharing the results of the OHDSI tools, with
-    functions for encrypting results, sending results through SFTP to a central
+Maintainer: Marc Suchard <msuchard@ucla.edu>
+Description: Package for sharing of the results of the OHDSI tools, with
+    functions for encrypting results and sending results through SFTP to a central
     site, and uploading results into a postgresql database.
 URL: https://ohdsi.github.io/OhdsiSharing, https://github.com/OHDSI/OhdsiSharing
 BugReports: https://github.com/OHDSI/OhdsiSharing/issues
