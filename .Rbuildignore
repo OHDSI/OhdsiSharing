@@ -4,6 +4,7 @@ extras
 .travis.yml
 .classpath
 .project
+man-roxygen
 build
 build.xml
 deploy.sh
@@ -12,3 +13,5 @@ java-src
 bin
 _pkgdown.yml
 docs
+.github
+.lintr

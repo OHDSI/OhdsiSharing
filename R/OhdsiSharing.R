@@ -20,6 +20,8 @@
 #' @importFrom utils install.packages menu
 NULL
 
+# nocov start
 .onLoad <- function(libname, pkgname) {
   rJava::.jpackage(pkgname, lib.loc = libname)
 }
+# nocov end

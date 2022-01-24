@@ -4,11 +4,11 @@
 \name{OhdsiSharing-package}
 \alias{OhdsiSharing}
 \alias{OhdsiSharing-package}
-\title{OhdsiSharing: Package for sharing of the results of the OHDSI tools}
+\title{OhdsiSharing: Package for sharing the results of the OHDSI tools}
 \description{
-Package for sharing of the results of the OHDSI tools, with
-    functions for encrypting results and sending results through SFTP to a central
-    site.
+Package for sharing the results of the OHDSI tools, with
+    functions for encrypting results, sending results through SFTP to a central
+    site, and uploading results into a postgresql database.
 }
 \seealso{
 Useful links:

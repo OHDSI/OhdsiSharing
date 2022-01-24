@@ -1,6 +1,6 @@
 Package: OhdsiSharing
 Type: Package
-Title: Package for sharing of the results of the OHDSI tools
+Title: Package for sharing the results of the OHDSI tools
 Version: 0.2.2
 Date: 2020-06-18
 Authors@R: c(
@@ -11,13 +11,27 @@ Authors@R: c(
 Maintainer: Marc Suchard <msuchard@ucla.edu>
 Description: Package for sharing of the results of the OHDSI tools, with
     functions for encrypting results and sending results through SFTP to a central
-    site.
+    site, and uploading results into a postgresql database.
 URL: https://ohdsi.github.io/OhdsiSharing, https://github.com/OHDSI/OhdsiSharing
 BugReports: https://github.com/OHDSI/OhdsiSharing/issues
+Depends:
+	R (>= 4.0.0)
 Imports:
     rJava,
-    ParallelLogger
+    ParallelLogger,
+    RJSONIO,
+    DatabaseConnector (>= 4.0.0),
+    SqlRender (>= 1.7.0),
+    dplyr (>= 1.0.0),
+    magrittr (>= 2.0.1),
+    readr (>= 1.4.0),
+    zip (>= 2.2.0),
+    rlang
 Suggests:
-    testthat
+    testthat,
+    withr,
+    covr,
+    lintr
 License: Apache License
 RoxygenNote: 7.1.1
+Encoding: UTF-8
