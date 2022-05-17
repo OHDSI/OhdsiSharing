@@ -6,9 +6,7 @@
 \alias{OhdsiSharing-package}
 \title{OhdsiSharing: Package for sharing of the results of the OHDSI tools}
 \description{
-Package for sharing of the results of the OHDSI tools, with
-    functions for encrypting results and sending results through SFTP to a central
-    site.
+Package for sharing of the results of the OHDSI tools, with functions for encrypting results and sending results through SFTP to a central site.
 }
 \seealso{
 Useful links:
@@ -20,11 +18,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Martijn Schuemie \email{schuemie@ohdsi.org}
+\strong{Maintainer}: Marc Suchard \email{msuchard@ucla.edu}
 
 Authors:
 \itemize{
-  \item Marc Suchard
+  \item Martijn Schuemie \email{schuemie@ohdsi.org}
   \item Lee Evans
 }
 

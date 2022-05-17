@@ -17,6 +17,7 @@
 #' @keywords internal
 "_PACKAGE"
 
+#' @import dplyr
 #' @importFrom utils install.packages menu
 NULL
 

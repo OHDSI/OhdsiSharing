@@ -4,20 +4,30 @@ Title: Package for sharing of the results of the OHDSI tools
 Version: 0.2.2
 Date: 2020-06-18
 Authors@R: c(
-    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
-    person("Marc", "Suchard", role = c("aut")),
+    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut")),
+    person("Marc", "Suchard", , "msuchard@ucla.edu", role = c("aut", "cre")),
     person("Lee", "Evans", role = c("aut"))
     )
-Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
+Maintainer: Marc Suchard <msuchard@ucla.edu>
 Description: Package for sharing of the results of the OHDSI tools, with
     functions for encrypting results and sending results through SFTP to a central
     site.
 URL: https://ohdsi.github.io/OhdsiSharing, https://github.com/OHDSI/OhdsiSharing
 BugReports: https://github.com/OHDSI/OhdsiSharing/issues
 Imports:
-    rJava,
-    ParallelLogger
+  checkmate,
+  CohortGenerator,
+  DatabaseConnector,
+  dplyr,
+  ParallelLogger,
+  readr,
+  rJava,
+  SqlRender
 Suggests:
-    testthat
+  testthat
+Remotes:
+  ohdsi/CohortGenerator
 License: Apache License
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
+Encoding: UTF-8
+Language: en-US

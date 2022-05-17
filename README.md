@@ -2,7 +2,7 @@ OhdsiSharing
 ============
 
 [![Build Status](https://github.com/OHDSI/OhdsiSharing/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/OhdsiSharing/actions?query=workflow%3AR-CMD-check)
-[![codecov.io](https://codecov.io/github/OHDSI/OhdsiSharing/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiSharing?branch=master)
+[![codecov.io](https://codecov.io/github/OHDSI/OhdsiSharing/coverage.svg?branch=main)](https://codecov.io/github/OHDSI/OhdsiSharing?branch=main)
 
 OhdsiSharing is part of [HADES](https://ohdsi.github.io/Hades).
 
@@ -52,7 +52,7 @@ User Documentation
 Documentation can be found on the [package website](https://ohdsi.github.io/OhdsiSharing).
 
 PDF versions of the documentation are also available:
-* Package manual: [OhdsiSharing.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/master/extras/OhdsiSharing.pdf)
+* Package manual: [OhdsiSharing.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiSharing/main/extras/OhdsiSharing.pdf)
 
 Support
 =======
