@@ -1,7 +1,7 @@
-columnName,description
-tableName,The name of the database table to create in the results schema.
-columnName,The name of the database field to create in the table.
-dataType,The data type of the column
-isRequired,"When set to 'No', the column will allow NULL values. When 'Yes' a value is required in the column for all rows."
-primaryKey,"When 'Yes', this column is part of the primary key definition of the table."
-emptyIsNa,"When 'Yes', the column will require a default value."
+column_name,description
+table_name,The name of the database table to create in the results schema.
+column_name,The name of the database field to create in the table.
+data_type,The data type of the column
+is_required,"When set to 'No', the column will allow NULL values. When 'Yes' a value is required in the column for all rows."
+primary_key,"When 'Yes', this column is part of the primary key definition of the table."
+empty_is_na,"When 'Yes', the column will require a default value."

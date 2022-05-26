@@ -36,148 +36,52 @@ getEmptyResultsDataModelSpecification <- function(verbose = FALSE) {
   invisible(returnVal)
 }
 
-#' An opinionated function for uploading results a database server.
+#' Unzips a results.zip file and enforces standards required by 
+#' \code{uploadResults}
 #'
 #' @description
-#' This function will upload results that are in a .ZIP file 
-#' to a database server. This function is opinionated since it enforces the
-#' following requirements for the contents of the .ZIP file:
-#' 
-#' 1. The results stored in the .ZIP file are in .CSV format
-#' 2. The name of the result file is the name of the target table in the database
-#' and that the file name is in snake_case.
-#' 3. The results .CSV file has column headings in snake_case
-#' 4. The column "database_id" is used to indicate the database contributing
-#' the results to the result set.
-#' 5. The .ZIP file contains a file called "database.csv" that describes the
-#' database details for the results.
-#' 6. The .ZIP file contains a file called "resultsDataModelSpecification.csv" that
-#' fully specifies the results data model.
+#' This function will unzip the zipFile to the resultsFolder and assert
+#' that the file resultsDataModelSpecification.csv exists in the resultsFolder
+#' to ensure that it will work with \code{uploadResults}
 #'
-#' NOTE: Set the POSTGRES_PATH environmental variable to the path to the folder 
-#' containing the psql executable to enable bulk upload (recommended).
+#' @param zipFile   The location of the .zip file that holds the results to upload
 #'
-#' @param connectionDetails   An object of type \code{connectionDetails} as created using the
-#'                            \code{\link[DatabaseConnector]{createConnectionDetails}} function in the
-#'                            DatabaseConnector package.
-#' @param schema         The schema on the postgres server where the tables have been created.
-#' @param zipFileName    The path to the zip file containing the results to upload.
-#' @param createTables   When TRUE, the tables specified in the resultsDataModelSpecification.csv
-#'                       will be created in the schema. NOTE: This will NOT check if the tables
-#'                       already exist which may cause loss of data.
-#' @param forceOverWriteOfSpecifications  If TRUE, specifications of the phenotypes, cohort definitions, and analysis
-#'                       will be overwritten if they already exist on the database. Only use this if these specifications
-#'                       have changed since the last upload.
-#' @param purgeSiteDataBeforeUploading If TRUE, before inserting data for a specific databaseId all the data for
-#'                       that site will be dropped. This assumes the input zip file contains the full data for that
-#'                       data site.
-#' @param tempFolder     A folder on the local file system where the zip files are extracted to. Will be cleaned
-#'                       up when the function is finished. Can be used to specify a temp folder on a drive that
-#'                       has sufficient space if the default system temp space is too limited.
+#' @param resultsFolder The folder to use when unzipping the .zip file. If this folder
+#'                    does not exist, this function will attempt to create the folder.
 #'
 #' @export
-uploadResults <- function(connectionDetails = NULL,
-                          schema,
-                          zipFileName,
-                          createTables = TRUE,
-                          forceOverWriteOfSpecifications = FALSE,
-                          purgeSiteDataBeforeUploading = TRUE,
-                          tempFolder = tempdir()) {
-  if (connectionDetails$dbms == "sqlite" & schema != "main") {
-    stop("Invalid schema for sqlite, use schema = 'main'")
+unzipResults <- function(zipFile,
+                         resultsFolder) {
+  checkmate::assert_file_exists(zipFile)
+  if (!dir.exists(resultsFolder)) {
+    dir.create(path = resultsFolder, recursive = TRUE)
   }
-  
-  start <- Sys.time()
-  connection <- DatabaseConnector::connect(connectionDetails)
-  on.exit(DatabaseConnector::disconnect(connection))
-  
-  unzipFolder <- tempfile("unzipTempFolder", tmpdir = tempFolder)
-  dir.create(path = unzipFolder, recursive = TRUE)
-  on.exit(unlink(unzipFolder, recursive = TRUE), add = TRUE)
-  
-  message("Unzipping ", zipFileName)
-  zip::unzip(zipFileName, exdir = unzipFolder)
-  
-  # AGS: This assumes a location of the specifications.
-  # Instead we should retrieve this information from the
-  # results zip and exit if it is not found.
-  specifications <- getResultsDataModelSpecifications(pathToCsv = unzipFolder)
-  
-  # AGS: This requires that every results .ZIP contains a 
-  # database.csv. Do we want to continue that practice?
-  if (purgeSiteDataBeforeUploading) {
-    database <- CohortGenerator::readCsv(file.path(unzipFolder, "database.csv"))
-    colnames(database) <-
-      SqlRender::snakeCaseToCamelCase(colnames(database))
-    databaseId <- database$databaseId
-  }
-  
-  # Create the tables
-  if (createTables) {
-    message("Creating tables to hold results")
-    createResultsDataModel(connection = connection,
-                           schema = schema,
-                           specifications = specifications)
-  }
-  
-  invisible(lapply(X = unique(specifications$tableName), 
-                   FUN = uploadTable,
-                   connection = connection,
-                   schema = schema,
-                   databaseId = databaseId,
-                   resultsFolder = unzipFolder,
-                   forceOverWriteOfSpecifications = forceOverWriteOfSpecifications,
-                   purgeSiteDataBeforeUploading = purgeSiteDataBeforeUploading,
-                   specifications = specifications))
-  delta <- Sys.time() - start
-  writeLines(paste("Uploading data took", signif(delta, 3), attr(delta, "units")))
+  rlang::inform(paste0("Unzipping ", basename(zipFile), " to ", resultsFolder))
+  zip::unzip(zipFile, exdir = resultsFolder)
+  checkmate::assert_file_exists(file.path(resultsFolder, "resultsDataModelSpecification.csv"))
 }
 
-
-# Private methods ----------------
-getResultsDataModelSpecifications <- function(pathToCsv) {
-  resultsDataModelSpecifications <- CohortGenerator::readCsv(file = file.path(pathToCsv, "resultsDataModelSpecification.csv"))
-  return(resultsDataModelSpecifications)
-}
-
-createResultsDataModelDDL <- function(schema,
-                                      specifications) {
-  tableList <- unique(specifications$tableName)
-  checkmate::assert_count(length(tableList))
-  ddl <- ""
-  for (t in 1:length(tableList)) {
-    tableName <- tableList[t]
-    dataModelSubset <- specifications[specifications$tableName == tableName, ]
-    
-    # Loop through the columns to create the column DDL
-    columns <- c()
-    primaryKey <- c()
-    for (i in 1:nrow(dataModelSubset)) {
-      columns <- c(columns, paste(dataModelSubset$columnName[i],
-                                  dataModelSubset$dataType[i],
-                                  ifelse(toupper(dataModelSubset$isRequired[i]) == "YES", "NOT NULL", "NULL")))
-      if (toupper(dataModelSubset$primaryKey[i]) == "YES") {
-        primaryKey <- c(primaryKey, dataModelSubset$columnName[i])
-      }
-    }
-    
-    sql <- SqlRender::readSql(system.file("sql/sql_server/CreateResultTable.sql", 
-                                          package = "OhdsiSharing",
-                                          mustWork = TRUE))
-    renderedSql <- SqlRender::render(sql = sql,
-                                     results_schema = schema,
-                                     table = tableName,
-                                     columns = columns,
-                                     primary_key = primaryKey)
-    ddl <- paste(ddl, renderedSql, sep = "\n")
-  }
-  invisible(ddl)
-}
-
-createResultsDataModel <- function(connection = NULL,
-                                   connectionDetails = NULL,
-                                   schema,
-                                   specifications) {
+#' Creates the results data model tables to use when uploading results
+#'
+#' @description
+#' This function assumes that you have used \code{unzipResults} to extract
+#' the contents of your results .zip file and that the file 
+#' resultsDataModelSpecification.csv exists in the resultsFolder. This function
+#' will use resultsDataModelSpecification.csv to create the tables in the schema 
+#' specified.
+#'
+#' @template Connection
+#' 
+#' @param schema   The target schema to create the tables in the database
+#'
+#' @param resultsFolder The folder that holds the resultsDataModelSpecification.csv
+#'                    file.
+#'
+#' @export
+createResultsDataModelTables <- function(connection = NULL,
+                                         connectionDetails = NULL,
+                                         schema,
+                                         resultsFolder) {
   if (is.null(connection)) {
     if (!is.null(connectionDetails)) {
       connection <- DatabaseConnector::connect(connectionDetails)
@@ -186,11 +90,14 @@ createResultsDataModel <- function(connection = NULL,
       stop("No connection or connectionDetails provided.")
     }
   }
-
+  
   if (connection@dbms == "sqlite" & schema != "main") {
     stop("Invalid schema for sqlite, use schema = 'main'")
   }
-
+  
+  checkmate::assert_directory_exists(resultsFolder)
+  
+  specifications <- getResultsDataModelSpecifications(resultsFolder = resultsFolder)
   ddlSql <- createResultsDataModelDDL(schema = schema,
                                       specifications = specifications)
   sql <- SqlRender::translate(sql = ddlSql,
@@ -198,66 +105,139 @@ createResultsDataModel <- function(connection = NULL,
   DatabaseConnector::executeSql(connection, sql)
 }
 
-appendNewRows <- function(data,
-                          newData,
-                          tableName,
-                          specifications) {
-  if (nrow(data) > 0) {
-    primaryKeys <- specifications %>%
-      dplyr::filter(.data$tableName == !!tableName &
-                      .data$primaryKey == "Yes") %>%
-      dplyr::select(.data$columnName) %>%
-      dplyr::pull()
-    newData <- newData %>%
-      dplyr::anti_join(data, by = primaryKeys)
+#' An opinionated function for uploading results a database server.
+#'
+#' @description
+#' This function will upload results that were extracted using \code{unzipResults}
+#' and upload them to a database server. This function assumes that database
+#' tables are already created using the \code{createResultsDataModelTables} function.
+#' This function is opinionated since it enforces the following requirements:
+#' 
+#' 1. The results files are in .CSV format
+#' 2. The name of the result file is the name of the target table in the database
+#' and that the file name is in snake_case. NOTE: The target table is found in 
+#' "resultsDataModelSpecification.csv" and may include a tablePrefix that is 
+#' specified when uploading results.
+#' 3. The results .CSV file has column headings in snake_case
+#' 4. The column "database_id" is used to indicate the database contributing
+#' the results to the result set.
+#' 6. The results .zip file contains a file called 
+#' "resultsDataModelSpecification.csv" that fully specifies the 
+#' results data model.
+#'
+#'
+#' @template Connection
+#' 
+#'                            
+#' @param schema         The schema on the postgres server where the tables have been created.
+#'                       See \code{createResultsDataModelTables} for more information.
+#' 
+#' @param resultsFolder    The path to the folder containing the results to upload.
+#'                       See \code{unzipResults} for more information.
+#'                       
+#' @param forceOverWriteOfSpecifications  If TRUE, specifications of the phenotypes, cohort definitions, and analysis
+#'                       will be overwritten if they already exist on the database. Only use this if these specifications
+#'                       have changed since the last upload.
+#'                       
+#' @param purgeSiteDataBeforeUploading If TRUE, before inserting data for a specific databaseId all the data for
+#'                       that site will be dropped. This assumes the input zip file contains the full data for that
+#'                       data site.
+#'                       
+#' @param tablePrefix    The table prefix used in naming the tables found in 
+#'                       resultsDataModelSpecification.csv.
+#'
+#' @export
+uploadResults <- function(connection = NULL,
+                          connectionDetails = NULL,
+                          schema,
+                          resultsFolder,
+                          forceOverWriteOfSpecifications = FALSE,
+                          purgeSiteDataBeforeUploading = TRUE,
+                          tablePrefix = "") {
+  if (is.null(connection)) {
+    if (!is.null(connectionDetails)) {
+      connection <- DatabaseConnector::connect(connectionDetails)
+      on.exit(DatabaseConnector::disconnect(connection))
+    } else {
+      stop("No connection or connectionDetails provided.")
+    }
   }
-  return(dplyr::bind_rows(data, newData))
+  
+  if (connection@dbms == "sqlite" & schema != "main") {
+    stop("Invalid schema for sqlite, use schema = 'main'")
+  }
+  
+  start <- Sys.time()
+
+  # Get the results data model specification
+  specifications <- getResultsDataModelSpecifications(resultsFolder = resultsFolder)
+  
+  invisible(lapply(X = unique(specifications$tableName), 
+                   FUN = uploadTable,
+                   connection = connection,
+                   schema = schema,
+                   resultsFolder = resultsFolder,
+                   forceOverWriteOfSpecifications = forceOverWriteOfSpecifications,
+                   purgeSiteDataBeforeUploading = purgeSiteDataBeforeUploading,
+                   specifications = specifications,
+                   tablePrefix = tablePrefix))
+  delta <- Sys.time() - start
+  rlang::inform(paste("Uploading data took", signif(delta, 3), attr(delta, "units")))
 }
 
-naToEmpty <- function(x) {
-  x[is.na(x)] <- ""
-  return(x)
-}
-
-naToZero <- function(x) {
-  x[is.na(x)] <- 0
-  return(x)
-}
-
+# Private methods ----------------
 uploadTable <- function(tableName,
                         connection,
                         schema,
-                        databaseId,
                         resultsFolder,
                         forceOverWriteOfSpecifications,
                         purgeSiteDataBeforeUploading,
-                        specifications) {
-  message("Uploading table ", tableName)
+                        specifications,
+                        tablePrefix) {
+  tableNameWithoutPrefix <- sub(pattern = tablePrefix,
+                                replacement = "",
+                                x = tableName)
+  csvFileName <- paste0(tableNameWithoutPrefix, ".csv")
   
-  primaryKey <- specifications %>%
-    filter(.data$tableName == !!tableName &
-             .data$primaryKey == "Yes") %>%
-    select(.data$columnName) %>%
-    pull()
-  
-  if (purgeSiteDataBeforeUploading &&
-      "database_id" %in% primaryKey) {
-    deleteAllRecordsForDatabaseId(
-      connection = connection,
-      schema = schema,
-      tableName = tableName,
-      databaseId = databaseId
-    )
-  }
-  
-  csvFileName <- paste0(tableName, ".csv")
   if (csvFileName %in% list.files(resultsFolder)) {
+    rlang::inform(paste0("Uploading file: ", csvFileName, " to table: ", tableName))
+    
+    # Get the primary key columns from the specification file
+    primaryKey <- specifications %>%
+      filter(.data$tableName == !!tableName &
+               .data$primaryKey == "Yes") %>%
+      select(.data$columnName) %>%
+      pull()
+
+    # Create an environment variable to hold
+    # the information about the target table for
+    # uploading the data
     env <- new.env()
     env$schema <- schema
     env$tableName <- tableName
     env$primaryKey <- primaryKey
     if (purgeSiteDataBeforeUploading &&
         "database_id" %in% primaryKey) {
+      # Get the databaseId by reading the 1st row of data
+      results <- readr::read_csv(
+        file = file.path(resultsFolder, csvFileName),
+        n_max = 1,
+        show_col_types = FALSE)
+      if (nrow(results) == 1) {
+        databaseId <- results$database_id[1]
+        # Remove the existing data for the databaseId
+        deleteAllRecordsForDatabaseId(
+          connection = connection,
+          schema = schema,
+          tableName = tableName,
+          databaseId = databaseId
+        )
+      }
+      # Set primaryKeyValuesInDb to NULL
+      # to indicate that the primary key
+      # value need not be checked since we've
+      # purged the database data ahead of loading 
+      # results from the file
       env$primaryKeyValuesInDb <- NULL
     } else if (length(primaryKey) > 0) {
       sql <- "SELECT DISTINCT @primary_key FROM @schema.@table_name;"
@@ -275,12 +255,12 @@ uploadTable <- function(tableName,
     }
     
     uploadChunk <- function(chunk, pos) {
-      message(
+      rlang::inform(paste0(
         "- Preparing to upload rows ",
         pos,
         " through ",
         pos + nrow(chunk) - 1
-      )
+      ))
       
       # Primary key fields cannot be NULL, so for some tables convert NAs to empty or zero:
       toEmpty <- specifications %>%
@@ -318,12 +298,12 @@ uploadTable <- function(tableName,
         if (nrow(duplicates) != 0) {
           if ("database_id" %in% env$primaryKey ||
               forceOverWriteOfSpecifications) {
-            message(
+            rlang::inform(paste0(
               "- Found ",
               nrow(duplicates),
               " rows in database with the same primary key ",
               "as the data to insert. Deleting from database before inserting."
-            )
+            ))
             deleteFromServer(
               connection = connection,
               schema = env$schema,
@@ -331,12 +311,12 @@ uploadTable <- function(tableName,
               keyValues = duplicates
             )
           } else {
-            message(
+            rlang::inform(paste0(
               "- Found ",
               nrow(duplicates),
               " rows in database with the same primary key ",
               "as the data to insert. Removing from data to insert."
-            )
+            ))
             chunk <- chunk %>%
               anti_join(duplicates, by = env$primaryKey)
           }
@@ -346,7 +326,7 @@ uploadTable <- function(tableName,
         }
       }
       if (nrow(chunk) == 0) {
-        message("- No data left to insert")
+        rlang::inform("- No data left to insert")
       } else {
         DatabaseConnector::insertTable(
           connection = connection,
@@ -374,6 +354,72 @@ uploadTable <- function(tableName,
   }
 }
 
+getResultsDataModelSpecifications <- function(resultsFolder) {
+  fileLocation <- file.path(resultsFolder, "resultsDataModelSpecification.csv")
+  checkmate::assert_file_exists(file.path(resultsFolder, "resultsDataModelSpecification.csv"))
+  resultsDataModelSpecifications <- CohortGenerator::readCsv(file = fileLocation)
+  return(resultsDataModelSpecifications)
+}
+
+createResultsDataModelDDL <- function(schema,
+                                      specifications) {
+  tableList <- unique(specifications$tableName)
+  checkmate::assert_count(length(tableList))
+  ddl <- ""
+  for (t in 1:length(tableList)) {
+    tableName <- tableList[t]
+    dataModelSubset <- specifications[specifications$tableName == tableName, ]
+    
+    # Loop through the columns to create the column DDL
+    columns <- c()
+    primaryKey <- c()
+    for (i in 1:nrow(dataModelSubset)) {
+      columns <- c(columns, paste(dataModelSubset$columnName[i],
+                                  dataModelSubset$dataType[i],
+                                  ifelse(toupper(dataModelSubset$isRequired[i]) == "YES", "NOT NULL", "NULL")))
+      if (toupper(dataModelSubset$primaryKey[i]) == "YES") {
+        primaryKey <- c(primaryKey, dataModelSubset$columnName[i])
+      }
+    }
+    
+    sql <- SqlRender::readSql(system.file("sql/sql_server/CreateResultTable.sql", 
+                                          package = "OhdsiSharing",
+                                          mustWork = TRUE))
+    renderedSql <- SqlRender::render(sql = sql,
+                                     results_schema = schema,
+                                     table = tableName,
+                                     columns = columns,
+                                     primary_key = primaryKey)
+    ddl <- paste(ddl, renderedSql, sep = "\n")
+  }
+  invisible(ddl)
+}
+
+appendNewRows <- function(data,
+                          newData,
+                          tableName,
+                          specifications) {
+  if (nrow(data) > 0) {
+    primaryKeys <- specifications %>%
+      dplyr::filter(.data$tableName == !!tableName &
+                      .data$primaryKey == "Yes") %>%
+      dplyr::select(.data$columnName) %>%
+      dplyr::pull()
+    newData <- newData %>%
+      dplyr::anti_join(data, by = primaryKeys)
+  }
+  return(dplyr::bind_rows(data, newData))
+}
+
+naToEmpty <- function(x) {
+  x[is.na(x)] <- ""
+  return(x)
+}
+
+naToZero <- function(x) {
+  x[is.na(x)] <- 0
+  return(x)
+}
 
 deleteFromServer <- function(connection, schema, tableName, keyValues) {
     createSqlStatement <- function(i) {
@@ -420,7 +466,7 @@ deleteAllRecordsForDatabaseId <- function(connection,
   databaseIdCount <-
     DatabaseConnector::renderTranslateQuerySql(connection, sql)[, 1]
   if (databaseIdCount != 0) {
-    message(
+    rlang::inform(
       sprintf(
         "- Found %s rows in  database with database ID '%s'. Deleting all before inserting.",
         databaseIdCount,

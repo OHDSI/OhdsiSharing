@@ -5,27 +5,32 @@
 \title{An opinionated function for uploading results a database server.}
 \usage{
 uploadResults(
+  connection = NULL,
   connectionDetails = NULL,
   schema,
-  zipFileName,
-  createTables = TRUE,
+  resultsFolder,
   forceOverWriteOfSpecifications = FALSE,
   purgeSiteDataBeforeUploading = TRUE,
-  tempFolder = tempdir()
+  tablePrefix = ""
 )
 }
 \arguments{
+\item{connection}{An object of type \code{connection} as created using the
+\code{\link[DatabaseConnector]{connect}} function in the
+DatabaseConnector package. Can be left NULL if \code{connectionDetails}
+is provided, in which case a new connection will be opened at the start
+of the function, and closed when the function finishes.}
+
 \item{connectionDetails}{An object of type \code{connectionDetails} as created using the
 \code{\link[DatabaseConnector]{createConnectionDetails}} function in the
-DatabaseConnector package.}
+DatabaseConnector package. Can be left NULL if \code{connection} is
+provided.}
 
-\item{schema}{The schema on the postgres server where the tables have been created.}
+\item{schema}{The schema on the postgres server where the tables have been created.
+See \code{createResultsDataModelTables} for more information.}
 
-\item{zipFileName}{The path to the zip file containing the results to upload.}
-
-\item{createTables}{When TRUE, the tables specified in the resultsDataModelSpecification.csv
-will be created in the schema. NOTE: This will NOT check if the tables
-already exist which may cause loss of data.}
+\item{resultsFolder}{The path to the folder containing the results to upload.
+See \code{unzipResults} for more information.}
 
 \item{forceOverWriteOfSpecifications}{If TRUE, specifications of the phenotypes, cohort definitions, and analysis
 will be overwritten if they already exist on the database. Only use this if these specifications
@@ -35,26 +40,24 @@ have changed since the last upload.}
 that site will be dropped. This assumes the input zip file contains the full data for that
 data site.}
 
-\item{tempFolder}{A folder on the local file system where the zip files are extracted to. Will be cleaned
-up when the function is finished. Can be used to specify a temp folder on a drive that
-has sufficient space if the default system temp space is too limited.}
+\item{tablePrefix}{The table prefix used in naming the tables found in 
+resultsDataModelSpecification.csv.}
 }
 \description{
-This function will upload results that are in a .ZIP file 
-to a database server. This function is opinionated since it enforces the
-following requirements for the contents of the .ZIP file:
+This function will upload results that were extracted using \code{unzipResults}
+and upload them to a database server. This function assumes that database
+tables are already created using the \code{createResultsDataModelTables} function.
+This function is opinionated since it enforces the following requirements:
 
-1. The results stored in the .ZIP file are in .CSV format
+1. The results files are in .CSV format
 2. The name of the result file is the name of the target table in the database
-and that the file name is in snake_case.
+and that the file name is in snake_case. NOTE: The target table is found in 
+"resultsDataModelSpecification.csv" and may include a tablePrefix that is 
+specified when uploading results.
 3. The results .CSV file has column headings in snake_case
 4. The column "database_id" is used to indicate the database contributing
 the results to the result set.
-5. The .ZIP file contains a file called "database.csv" that describes the
-database details for the results.
-6. The .ZIP file contains a file called "resultsDataModelSpecification.csv" that
-fully specifies the results data model.
-
-NOTE: Set the POSTGRES_PATH environmental variable to the path to the folder 
-containing the psql executable to enable bulk upload (recommended).
+6. The results .zip file contains a file called 
+"resultsDataModelSpecification.csv" that fully specifies the 
+results data model.
 }

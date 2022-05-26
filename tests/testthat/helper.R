@@ -1,1 +1,0 @@
-connectionDetails <- Eunomia::getEunomiaConnectionDetails()
