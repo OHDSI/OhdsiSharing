@@ -115,9 +115,7 @@ createResultsDataModelTables <- function(connection = NULL,
 #' 
 #' 1. The results files are in .CSV format
 #' 2. The name of the result file is the name of the target table in the database
-#' and that the file name is in snake_case. NOTE: The target table is found in 
-#' "resultsDataModelSpecification.csv" and may include a tablePrefix that is 
-#' specified when uploading results.
+#' and that the file name is in snake_case. 
 #' 3. The results .CSV file has column headings in snake_case
 #' 4. The column "database_id" is used to indicate the database contributing
 #' the results to the result set.
@@ -143,17 +141,13 @@ createResultsDataModelTables <- function(connection = NULL,
 #'                       that site will be dropped. This assumes the input zip file contains the full data for that
 #'                       data site.
 #'                       
-#' @param tablePrefix    The table prefix used in naming the tables found in 
-#'                       resultsDataModelSpecification.csv.
-#'
 #' @export
 uploadResults <- function(connection = NULL,
                           connectionDetails = NULL,
                           schema,
                           resultsFolder,
                           forceOverWriteOfSpecifications = FALSE,
-                          purgeSiteDataBeforeUploading = TRUE,
-                          tablePrefix = "") {
+                          purgeSiteDataBeforeUploading = TRUE) {
   if (is.null(connection)) {
     if (!is.null(connectionDetails)) {
       connection <- DatabaseConnector::connect(connectionDetails)
@@ -179,8 +173,7 @@ uploadResults <- function(connection = NULL,
                    resultsFolder = resultsFolder,
                    forceOverWriteOfSpecifications = forceOverWriteOfSpecifications,
                    purgeSiteDataBeforeUploading = purgeSiteDataBeforeUploading,
-                   specifications = specifications,
-                   tablePrefix = tablePrefix))
+                   specifications = specifications))
   delta <- Sys.time() - start
   rlang::inform(paste("Uploading data took", signif(delta, 3), attr(delta, "units")))
 }
@@ -192,12 +185,8 @@ uploadTable <- function(tableName,
                         resultsFolder,
                         forceOverWriteOfSpecifications,
                         purgeSiteDataBeforeUploading,
-                        specifications,
-                        tablePrefix) {
-  tableNameWithoutPrefix <- sub(pattern = tablePrefix,
-                                replacement = "",
-                                x = tableName)
-  csvFileName <- paste0(tableNameWithoutPrefix, ".csv")
+                        specifications) {
+  csvFileName <- paste0(tableName, ".csv")
   
   if (csvFileName %in% list.files(resultsFolder)) {
     rlang::inform(paste0("Uploading file: ", csvFileName, " to table: ", tableName))
@@ -363,6 +352,8 @@ getResultsDataModelSpecifications <- function(resultsFolder) {
 
 createResultsDataModelDDL <- function(schema,
                                       specifications) {
+  checkmate::assert_subset(x = c("tableName", "columnName", "dataType", "isRequired", "primaryKey"),
+                           choices = names(specifications))
   tableList <- unique(specifications$tableName)
   checkmate::assert_count(length(tableList))
   ddl <- ""

@@ -142,11 +142,24 @@ test_that("Test uploadResults expected case", {
                                              schema = schema,
                                              resultsFolder = tempZipLocation,
                                              forceOverWriteOfSpecifications = TRUE,
-                                             purgeSiteDataBeforeUploading = TRUE,
-                                             tablePrefix = "cg_"))
+                                             purgeSiteDataBeforeUploading = TRUE))
   
   tableCountAfterUpload <- length(DatabaseConnector::getTableNames(connection,
                                                                    databaseSchema = schema))
   expect_gt(tableCountAfterUpload, tableCountBeforeUpload)
+})
+
+test_that("Test createResultsDataModelDDL rejects specification data.frame missing required names", {
+  connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+  schema <- "main"
+  connection <- DatabaseConnector::connect(connectionDetails = connectionDetails)
+  on.exit(DatabaseConnector::disconnect(connection))
+  resultsFolder <- system.file("testData/invalidSpecTest",
+                               package = "OhdsiSharing",
+                               mustWork = TRUE)
+  
+  expect_error(createResultsDataModelTables(connection = connection,
+                                            schema = schema,
+                                            resultsFolder = resultsFolder))
 })
 

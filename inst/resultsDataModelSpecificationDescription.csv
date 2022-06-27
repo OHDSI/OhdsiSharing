@@ -5,3 +5,5 @@ data_type,The data type of the column
 is_required,"When set to 'No', the column will allow NULL values. When 'Yes' a value is required in the column for all rows."
 primary_key,"When 'Yes', this column is part of the primary key definition of the table."
 empty_is_na,"When 'Yes', the column will require a default value."
+mincellcount,"When 'Yes', this column is subject to censoring since it was below the minimum cell count"
+description,"The description of the column"

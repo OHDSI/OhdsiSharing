@@ -10,8 +10,7 @@ uploadResults(
   schema,
   resultsFolder,
   forceOverWriteOfSpecifications = FALSE,
-  purgeSiteDataBeforeUploading = TRUE,
-  tablePrefix = ""
+  purgeSiteDataBeforeUploading = TRUE
 )
 }
 \arguments{
@@ -39,9 +38,6 @@ have changed since the last upload.}
 \item{purgeSiteDataBeforeUploading}{If TRUE, before inserting data for a specific databaseId all the data for
 that site will be dropped. This assumes the input zip file contains the full data for that
 data site.}
-
-\item{tablePrefix}{The table prefix used in naming the tables found in 
-resultsDataModelSpecification.csv.}
 }
 \description{
 This function will upload results that were extracted using \code{unzipResults}
@@ -51,9 +47,7 @@ This function is opinionated since it enforces the following requirements:
 
 1. The results files are in .CSV format
 2. The name of the result file is the name of the target table in the database
-and that the file name is in snake_case. NOTE: The target table is found in 
-"resultsDataModelSpecification.csv" and may include a tablePrefix that is 
-specified when uploading results.
+and that the file name is in snake_case. 
 3. The results .CSV file has column headings in snake_case
 4. The column "database_id" is used to indicate the database contributing
 the results to the result set.
