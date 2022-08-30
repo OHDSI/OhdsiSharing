@@ -251,6 +251,9 @@ uploadTable <- function(tableName,
         pos + nrow(chunk) - 1
       ))
       
+      # Ensure all column names are in lowercase
+      colnames(chunk) <- tolower(colnames(chunk))
+      
       # Primary key fields cannot be NULL, so for some tables convert NAs to empty or zero:
       toEmpty <- specifications %>%
         filter(
