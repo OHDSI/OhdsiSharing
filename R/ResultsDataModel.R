@@ -258,7 +258,8 @@ uploadTable <- function(tableName,
       toEmpty <- specifications %>%
         filter(
           .data$tableName == env$tableName &
-            .data$emptyIsNa == "No" & grepl("varchar", .data$dataType)
+            .data$emptyIsNa == "No" & 
+            grepl("varchar", tolower(.data$dataType))
         ) %>%
         select(.data$columnName) %>%
         pull()
@@ -271,7 +272,7 @@ uploadTable <- function(tableName,
         filter(
           .data$tableName == env$tableName &
             .data$emptyIsNa == "No" &
-            .data$dataType %in% c("int", "bigint", "float")
+            tolower(.data$dataType) %in% c("int", "bigint", "float")
         ) %>%
         select(.data$columnName) %>%
         pull()
@@ -280,6 +281,46 @@ uploadTable <- function(tableName,
           dplyr::mutate_at(toZero, naToZero)
       }
       
+      toDate <- specifications %>%
+        filter(
+          .data$tableName == env$tableName &
+          .data$emptyIsNa == "No" &
+          tolower(.data$dataType) == "date"
+        ) %>%
+        select(.data$columnName) %>%
+        pull()
+      if (length(toDate) > 0) {
+        chunk <- chunk %>%
+          dplyr::mutate_at(toDate, lubridate::as_date)
+      }
+      
+      toTimestamp <- specifications %>%
+        filter(
+          .data$tableName == env$tableName &
+            .data$emptyIsNa == "No" &
+            grepl("timestamp", tolower(.data$dataType))
+        ) %>%
+        select(.data$columnName) %>%
+        pull()
+      if (length(toTimestamp) > 0) {
+        chunk <- chunk %>%
+          dplyr::mutate_at(toTimestamp, lubridate::as_datetime)
+      }
+      
+      toDouble <- specifications %>%
+        filter(
+          .data$tableName == env$tableName &
+            .data$emptyIsNa == "No" &
+            tolower(.data$dataType) %in% c("decimal", "numeric", "float")
+        ) %>%
+        select(.data$columnName) %>%
+        pull()
+      if (length(toDouble) > 0) {
+        chunk <- chunk %>%
+          dplyr::mutate_at(toDouble, formatDouble)
+      }
+      
+
       # Check if inserting data would violate primary key constraints:
       if (!is.null(env$primaryKeyValuesInDb)) {
         primaryKeyValuesInChunk <- unique(chunk[env$primaryKey])
@@ -320,18 +361,24 @@ uploadTable <- function(tableName,
       if (nrow(chunk) == 0) {
         rlang::inform("- No data left to insert")
       } else {
-        DatabaseConnector::insertTable(
-          connection = connection,
-          tableName = env$tableName,
-          databaseSchema = env$schema,
-          data = chunk,
-          dropTableIfExists = FALSE,
-          createTable = FALSE,
-          tempTable = FALSE,
-          progressBar = TRUE
-        )
+        insertTableStatus <- tryCatch(expr = {
+          DatabaseConnector::insertTable(
+            connection = connection,
+            tableName = env$tableName,
+            databaseSchema = env$schema,
+            data = chunk,
+            dropTableIfExists = FALSE,
+            createTable = FALSE,
+            tempTable = FALSE,
+            progressBar = TRUE
+          )
+        }, error = function(e) e)
+        if (inherits(insertTableStatus, "error")) {
+          stop(insertTableStatus$message)
+        }
       }
     }
+    
     readr::read_csv_chunked(
       file = file.path(resultsFolder, csvFileName),
       callback = uploadChunk,
@@ -413,6 +460,15 @@ naToEmpty <- function(x) {
 naToZero <- function(x) {
   x[is.na(x)] <- 0
   return(x)
+}
+
+# Aims to handle infinite values by replacing
+# as NaN
+formatDouble <- function(x) {
+  val <- as.character(x)
+  val[tolower(val) == 'inf' | tolower(val) == '-inf'] <- 'NaN'
+  val <- as.numeric(val)
+  return(val)
 }
 
 deleteFromServer <- function(connection, schema, tableName, keyValues) {

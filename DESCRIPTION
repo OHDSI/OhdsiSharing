@@ -19,6 +19,7 @@ Imports:
   CohortGenerator (>= 0.5.0),
   DatabaseConnector,
   dplyr,
+  lubridate,
   ParallelLogger,
   readr,
   rJava,
