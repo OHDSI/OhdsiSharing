@@ -254,37 +254,10 @@ uploadTable <- function(tableName,
       # Ensure all column names are in lowercase
       colnames(chunk) <- tolower(colnames(chunk))
       
-      # Primary key fields cannot be NULL, so for some tables convert NAs to empty or zero:
-      toEmpty <- specifications %>%
-        filter(
-          .data$tableName == env$tableName &
-            .data$emptyIsNa == "No" & 
-            grepl("varchar", tolower(.data$dataType))
-        ) %>%
-        select(.data$columnName) %>%
-        pull()
-      if (length(toEmpty) > 0) {
-        chunk <- chunk %>%
-          dplyr::mutate_at(toEmpty, naToEmpty)
-      }
-      
-      toZero <- specifications %>%
-        filter(
-          .data$tableName == env$tableName &
-            .data$emptyIsNa == "No" &
-            tolower(.data$dataType) %in% c("int", "bigint", "float")
-        ) %>%
-        select(.data$columnName) %>%
-        pull()
-      if (length(toZero) > 0) {
-        chunk <- chunk %>%
-          dplyr::mutate_at(toZero, naToZero)
-      }
-      
+      # Ensure dates are formatted properly
       toDate <- specifications %>%
         filter(
           .data$tableName == env$tableName &
-          .data$emptyIsNa == "No" &
           tolower(.data$dataType) == "date"
         ) %>%
         select(.data$columnName) %>%
@@ -297,8 +270,7 @@ uploadTable <- function(tableName,
       toTimestamp <- specifications %>%
         filter(
           .data$tableName == env$tableName &
-            .data$emptyIsNa == "No" &
-            grepl("timestamp", tolower(.data$dataType))
+          grepl("timestamp", tolower(.data$dataType))
         ) %>%
         select(.data$columnName) %>%
         pull()
@@ -310,7 +282,6 @@ uploadTable <- function(tableName,
       toDouble <- specifications %>%
         filter(
           .data$tableName == env$tableName &
-            .data$emptyIsNa == "No" &
             tolower(.data$dataType) %in% c("decimal", "numeric", "float")
         ) %>%
         select(.data$columnName) %>%
@@ -450,16 +421,6 @@ appendNewRows <- function(data,
       dplyr::anti_join(data, by = primaryKeys)
   }
   return(dplyr::bind_rows(data, newData))
-}
-
-naToEmpty <- function(x) {
-  x[is.na(x)] <- ""
-  return(x)
-}
-
-naToZero <- function(x) {
-  x[is.na(x)] <- 0
-  return(x)
 }
 
 # Aims to handle infinite values by replacing
